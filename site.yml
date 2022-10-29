@@ -1,0 +1,4 @@
+- name: All
+  hosts: local
+  roles:
+    - common
