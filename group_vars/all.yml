@@ -1,1 +1,16 @@
-group_hello: hello from group vars
+# App setup
+app_user: app-user
+app_group: app-group
+app_dir: /data
+
+# Users that are allowed to use docker
+# used by geerlingguy.docker
+docker_users:
+  - "{{ app_user }}"
+
+# Many users of this role wish to also use Ansible to then build Docker images
+# and manage Docker containers on the server where Docker is installed. In this
+# case, you can easily add in the docker Python library using the
+# geerlingguy.pip role:
+pip_install_packages:
+  - name: docker

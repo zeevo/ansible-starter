@@ -1,4 +1,9 @@
 - name: All
   hosts: local
+  become: yes
   roles:
-    - common
+    - ping
+    - user
+    - app-dir
+    - geerlingguy.pip
+    - geerlingguy.docker
