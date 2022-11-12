@@ -1,0 +1,20 @@
+- name: create directory for postgres
+  file:
+    path: "{{ app_dir }}/postgres"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: create data directory for postgres
+  file:
+    path: "{{ app_dir }}/postgres/data"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: add postgres docker compose
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ app_dir }}/postgres/docker-compose.postgres.yml"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"

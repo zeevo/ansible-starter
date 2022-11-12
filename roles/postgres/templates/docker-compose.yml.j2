@@ -1,0 +1,30 @@
+x-logging:
+  &default-logging
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  {{ postgres_service_name }}:
+    image: postgres:latest
+    command: ["postgres", "-c", "max_connections=300", "-c", "log_statement=all"]
+    logging: *default-logging
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: {{ postgres_user }}
+      POSTGRES_PASSWORD: {{ postgres_password }}
+      POSTGRES_DB: {{ postgres_db }}
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - app
+      - airflow
+    # Make sure log colors show up correctly
+    tty: true
+    networks:
+      - {{ docker_app_network }}
+
+networks:
+  {{ docker_app_network }}:
+    name: {{ docker_app_network }}

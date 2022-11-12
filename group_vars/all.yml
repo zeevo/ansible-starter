@@ -1,8 +1,13 @@
-# App setup
+# App setup ------------------------------------------
 app_user: app-user
 app_group: app-group
 app_dir: /data
 
+# app_git_repo: git@github.com:zeevo/higher-lower.git
+# app_git_ssh_key_file: /home/ec2-user/.ssh/id_ed25519
+
+# geerlingguy.docker ---------------------------------
+#
 # Users that are allowed to use docker
 # used by geerlingguy.docker
 docker_users:

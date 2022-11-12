@@ -1,0 +1,39 @@
+- name: create app directory
+  file:
+    path: "{{ app_dir }}/app"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+
+- name: clone app directory
+  become: yes
+  become_user: "{{ app_user }}"
+  git:
+    repo: "{{ app_git_repo }}"
+    dest: "{{ app_dir }}/app/{{ app_name }}"
+    version: "{{ app_branch }}"
+    accept_hostkey: yes
+    key_file: "{{ app_git_ssh_key_file }}"
+    force: yes
+
+- name: create env file
+  template:
+    src: env.j2
+    dest: "{{ app_dir }}/app/{{ app_name }}/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: build app image
+  docker_image:
+    source: build
+    build:
+      path: "{{ app_dir }}/app/{{ app_name }}"
+    name: "{{ app_name }}:latest"
+
+- name: add app docker compose
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ app_dir }}/app/docker-compose.app.yml"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"

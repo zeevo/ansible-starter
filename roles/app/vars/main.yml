@@ -1,0 +1,3 @@
+docker_app_network: app-net
+app_name: app
+app_branch: master
