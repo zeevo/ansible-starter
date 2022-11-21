@@ -18,3 +18,6 @@
     dest: "{{ app_dir }}/postgres/docker-compose.postgres.yml"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
+
+- name: Start postgres
+  shell: "docker-compose -f {{ app_dir }}/postgres/docker-compose.postgres.yml up -d --force-recreate"

@@ -17,9 +17,6 @@ services:
       POSTGRES_DB: {{ postgres_db }}
     volumes:
       - ./data:/var/lib/postgresql/data
-    networks:
-      - app
-      - airflow
     # Make sure log colors show up correctly
     tty: true
     networks:

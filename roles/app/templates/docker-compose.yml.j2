@@ -1,10 +1,12 @@
 version: "3"
 
 services:
-  {{ app_name }}:
+  app:
     ports:
       - 3000:3000
-    image: {{ app_name }}:latest
+    image: {{ app_image_name }}:latest
+    networks:
+      - {{ docker_app_network }}
 
 networks:
   {{ docker_app_network }}:
