@@ -1,19 +1,17 @@
-FROM node:17-slim
+FROM node:18-slim
 
 WORKDIR /app
 
-COPY package.json next.config.js postcss.config.js nexus.tsconfig.json codegen.yml next-env.d.ts tailwind.config.js ./
+COPY . ./
 
-RUN yarn install
+RUN npm install
 
-COPY src ./src
+RUN npm run postinstall
 
-COPY public ./public
+RUN npm run build
 
-COPY .env ./
+RUN npx next telemetry disable
 
-COPY scripts ./
+ENTRYPOINT [ "npm", "run" ]
 
-RUN yarn run build
-
-CMD [ "yarn", "start:prod" ]
+CMD [ "start" ]

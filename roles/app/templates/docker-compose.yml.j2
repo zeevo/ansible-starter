@@ -3,7 +3,7 @@ version: "3"
 services:
   app:
     ports:
-      - 3000:3000
+      - {{ app_ports | default('3000:3000') }}
     image: {{ app_image_name }}:latest
     networks:
       - {{ docker_app_network }}
