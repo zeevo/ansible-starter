@@ -2,6 +2,7 @@
 app_user: app-user
 app_group: app-group
 app_dir: /data
+app_name: app
 
 # app_git_repo: git@github.com:zeevo/higher-lower.git
 # app_git_ssh_key_file: /home/ec2-user/.ssh/id_ed25519
