@@ -6,6 +6,11 @@
     group: "{{ app_group }}"
   become: yes
 
+- name: Clear app
+  file:
+    state: absent
+    path: "{{ work_dir }}/app/{{ app_name }}"
+
 - name: Clone app directory
   become: yes
   become_user: "{{ app_user }}"
