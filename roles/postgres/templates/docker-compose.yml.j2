@@ -21,6 +21,7 @@ services:
     tty: true
     networks:
       - {{ docker_app_network }}
+    restart: always
 
 networks:
   {{ docker_app_network }}:

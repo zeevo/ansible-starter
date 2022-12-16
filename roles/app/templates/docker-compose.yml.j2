@@ -7,6 +7,7 @@ services:
     image: {{ app_image_name }}:latest
     networks:
       - {{ docker_app_network }}
+    restart: always
 
 networks:
   {{ docker_app_network }}:
