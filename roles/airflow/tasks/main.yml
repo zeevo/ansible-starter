@@ -1,20 +1,20 @@
 - name: Create directory for airflow
   file:
-    path: "{{ app_dir }}/airflow"
+    path: "{{ work_dir }}/airflow"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
 - name: Create logs directory for airflow
   file:
-    path: "{{ app_dir }}/airflow/logs"
+    path: "{{ work_dir }}/airflow/logs"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
 - name: Create dags directory for airflow
   file:
-    path: "{{ app_dir }}/airflow/dags"
+    path: "{{ work_dir }}/airflow/dags"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
@@ -22,7 +22,7 @@
 - name: Copy over extra dags directories
   copy:
     src: "{{ item }}"
-    dest: "{{ app_dir }}/airflow/dags"
+    dest: "{{ work_dir }}/airflow/dags"
     remote_src: yes
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
@@ -31,7 +31,7 @@
 
 - name: Create plugins directory for airflow
   file:
-    path: "{{ app_dir }}/airflow/plugins"
+    path: "{{ work_dir }}/airflow/plugins"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
@@ -39,23 +39,23 @@
 - name: Add extra python requirements
   template:
     src: Dockerfile.j2
-    dest: "{{ app_dir }}/airflow/Dockerfile"
+    dest: "{{ work_dir }}/airflow/Dockerfile"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
 - name: Add airflow Dockerfile
   template:
     src: Dockerfile.j2
-    dest: "{{ app_dir }}/airflow/Dockerfile"
+    dest: "{{ work_dir }}/airflow/Dockerfile"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
 - name: Add airflow docker compose
   template:
     src: docker-compose.yml.j2
-    dest: "{{ app_dir }}/airflow/docker-compose.airflow.yml"
+    dest: "{{ work_dir }}/airflow/docker-compose.airflow.yml"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
 - name: Start airflow
-  shell: "UID=$UID GID=$GID docker-compose -f {{ app_dir }}/airflow/docker-compose.airflow.yml up -d --force-recreate"
+  shell: "UID=$UID GID=$GID docker-compose -f {{ work_dir }}/airflow/docker-compose.airflow.yml up -d --force-recreate"

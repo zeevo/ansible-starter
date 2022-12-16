@@ -1,6 +1,6 @@
 - name: Create app directory
   file:
-    path: "{{ app_dir }}/app"
+    path: "{{ work_dir }}/app"
     state: directory
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
@@ -11,7 +11,7 @@
   become_user: "{{ app_user }}"
   git:
     repo: "{{ app_git_repo }}"
-    dest: "{{ app_dir }}/app/{{ app_name }}"
+    dest: "{{ work_dir }}/app/{{ app_name }}"
     version: "{{ app_branch }}"
     accept_hostkey: yes
     key_file: "{{ app_git_ssh_key_file }}"
@@ -20,14 +20,14 @@
 - name: Create env file
   template:
     src: env.j2
-    dest: "{{ app_dir }}/app/{{ app_name }}/.env"
+    dest: "{{ work_dir }}/app/{{ app_name }}/.env"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
 - name: Create Dockerfile
   template:
     src: Dockerfile.j2
-    dest: "{{ app_dir }}/app/{{ app_name }}/Dockerfile"
+    dest: "{{ work_dir }}/app/{{ app_name }}/Dockerfile"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
@@ -35,15 +35,15 @@
   docker_image:
     source: build
     build:
-      path: "{{ app_dir }}/app/{{ app_name }}"
+      path: "{{ work_dir }}/app/{{ app_name }}"
     name: "{{ app_name }}:latest"
 
 - name: Add app docker compose
   template:
     src: docker-compose.yml.j2
-    dest: "{{ app_dir }}/app/docker-compose.app.yml"
+    dest: "{{ work_dir }}/app/docker-compose.app.yml"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
 - name: Start app
-  shell: "docker-compose -f {{ app_dir }}/app/docker-compose.app.yml up -d --force-recreate"
+  shell: "docker-compose -f {{ work_dir }}/app/docker-compose.app.yml up -d --force-recreate"
