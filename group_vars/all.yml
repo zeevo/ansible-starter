@@ -11,6 +11,8 @@ app_name: app
 docker_users:
   - "{{ app_user }}"
 
+docker_app_network: app-net
+
 # Many users of this role wish to also use Ansible to then build Docker images
 # and manage Docker containers on the server where Docker is installed. In this
 # case, you can easily add in the docker Python library using the
