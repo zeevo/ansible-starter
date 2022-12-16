@@ -5,8 +5,8 @@
     - group_vars/vault.yml
   roles:
     - ping
+    - work-dir
     - geerlingguy.pip
     - geerlingguy.docker
     - user
-    - app-dir
     - app

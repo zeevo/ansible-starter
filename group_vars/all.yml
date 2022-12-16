@@ -1,7 +1,9 @@
+# Working dir
+work_dir: /data
+
 # App setup ------------------------------------------
 app_user: app-user
 app_group: app-group
-app_dir: /data
 app_name: app
 
 # geerlingguy.docker ---------------------------------
