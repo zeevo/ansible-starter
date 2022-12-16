@@ -36,12 +36,14 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
 
-- name: Build app image
+- name: Build app Docker image
   docker_image:
     source: build
     build:
       path: "{{ work_dir }}/app/{{ app_name }}"
     name: "{{ app_name }}:latest"
+    state: present
+    force_source: true
 
 - name: Add app docker compose
   template:
