@@ -11,7 +11,7 @@
     state: absent
     path: "{{ work_dir }}/app/{{ app_name }}"
 
-- name: Clone app directory
+- name: Clone app
   become: yes
   become_user: "{{ app_user }}"
   git:
@@ -54,3 +54,4 @@
 
 - name: Start app
   shell: "docker-compose -f {{ work_dir }}/app/docker-compose.app.yml up -d --force-recreate"
+  when: not app_dont_run
