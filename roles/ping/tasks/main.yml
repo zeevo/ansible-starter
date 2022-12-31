@@ -1,6 +1,2 @@
 - name: ping
   ping:
-
-- name: print hello world message
-  debug:
-    msg: "{{ message }}"
