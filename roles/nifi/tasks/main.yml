@@ -1,0 +1,52 @@
+- name: Create nifi user
+  user:
+    name: "{{ nifi_user }}"
+    group: "{{ app_group }}"
+    uid: 1000
+
+- name: Create directory for nifi
+  file:
+    path: "{{ work_dir }}/nifi"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Create data directory for nifi
+  file:
+    path: "{{ work_dir }}/nifi/data"
+    state: directory
+    owner: "{{ nifi_user }}"
+    group: "{{ app_group }}"
+
+- name: Create nifi internals directories
+  file:
+    path: "{{ work_dir }}/nifi/data/{{ item }}"
+    state: directory
+    owner: "{{ nifi_user }}"
+    group: "{{ app_group }}"
+  loop:
+    - content_repository
+    - database_repository
+    - flowfile_repository
+    - logs
+    - provenance_repository
+    - state
+
+- name: Add nifi docker compose
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ work_dir }}/nifi/docker-compose.nifi.yml"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Check if bootstrap needed
+  stat:
+    path: "{{ work_dir }}/nifi/bootstrapped"
+  register: p
+
+- name: Bootstrap nifi
+  include_tasks: bootstrap.yml
+  when: not p.stat.exists
+
+- name: Start nifi
+  shell: "docker-compose -f {{ work_dir }}/nifi/docker-compose.nifi.yml up -d --force-recreate"

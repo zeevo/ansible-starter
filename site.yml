@@ -1,12 +1,15 @@
 - name: All
-  hosts: dev
+  hosts: main
   become: yes
   vars_files:
     - group_vars/vault.yml
   roles:
-    - ping
-    - work-dir
-    - geerlingguy.pip
-    - geerlingguy.docker
-    - user
-    - app
+    - { role: "ping", tags: "ping" }
+    - { role: "user", tags: "user" }
+    - { role: "patch", tags: "patch" }
+    - { role: "work-dir", tags: "work-dir" }
+    - { role: "geerlingguy.pip", tags: "pip" }
+    - { role: "geerlingguy.docker", tags: "docker" }
+    - { role: "app", tags: "app" }
+    - { role: "nifi", tags: "nifi" }
+    - { role: "postgres", tags: "postgres" }
