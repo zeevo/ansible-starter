@@ -2,8 +2,8 @@
   file:
     path: "{{ work_dir }}/cron"
     state: directory
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
+    owner: "{{ cron_user }}"
+    group: "{{ cron_group }}"
   become: yes
 
 - name: Add crons
@@ -11,5 +11,6 @@
     name: "{{ item.name }}"
     minute: "{{ item.minute }}"
     hour: "{{ item.hour }}"
-    job: "{{ item.command }} > {{ work_dir }}/cron/{{ item.log_file }}"
+    job: "{{ item.command }} >> {{ work_dir }}/cron/{{ item.log_file }}"
+    user: "{{ cron_user }}"
   loop: "{{ cron }}"
