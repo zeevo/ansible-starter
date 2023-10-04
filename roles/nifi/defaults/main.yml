@@ -1,0 +1,7 @@
+nifi_user: zeevo # This user MUST have UID 1000
+nifi_https_port: 8443
+nifi_username: nifi
+nifi_password: nifinifinifinifi
+nifi_image: apache/nifi:1.23.2
+nifi_group: nifi
+nifi_dir: /data/nifi

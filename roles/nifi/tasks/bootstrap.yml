@@ -8,13 +8,15 @@
     -e SINGLE_USER_CREDENTIALS_USERNAME=nifi \
     -e SINGLE_USER_CREDENTIALS_PASSWORD=nifinifinifinifi \
     apache/nifi
+  become: yes
+  become_user: "{{ nifi_user }}"
 
 - name: Pause for 7 seconds
   pause:
     seconds: 7
 
 - name: bootstrap conf out of container
-  shell: "docker cp nifi-bootstrap:/opt/nifi/nifi-current/conf {{ work_dir }}/nifi/data/conf"
+  shell: "docker cp nifi-bootstrap:/opt/nifi/nifi-current/conf {{ nifi_dir }}/data/conf"
   become: yes
   become_user: "{{ nifi_user }}"
 
@@ -23,14 +25,14 @@
 
 - name: Create nifi internals conf directory
   file:
-    path: "{{ work_dir }}/nifi/data/conf"
+    path: "{{ nifi_dir }}/data/conf"
     state: directory
     owner: "{{ nifi_user }}"
-    group: "{{ app_group }}"
+    group: "{{ nifi_group }}"
 
 - name: Write bootstrap file
   file:
-    path: "{{ work_dir }}/nifi/bootstrapped"
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
+    path: "{{ nifi_dir }}/bootstrapped"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
     state: touch
