@@ -1,5 +1,0 @@
-nifi_user: ubuntu
-nifi_https_port: 8443
-nifi_username: nifi
-nifi_password: nifinifinifinifi
-nifi_image: apache/nifi:1.19.1

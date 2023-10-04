@@ -1,29 +1,33 @@
+- name: Create nifi group
+  group:
+    name: "{{ nifi_group }}"
+    state: present
+
 - name: Create nifi user
   user:
     name: "{{ nifi_user }}"
-    group: "{{ app_group }}"
-    uid: 1000
+    group: "{{ nifi_group }}"
 
 - name: Create directory for nifi
   file:
-    path: "{{ work_dir }}/nifi"
+    path: "{{ nifi_dir }}"
     state: directory
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
 
 - name: Create data directory for nifi
   file:
-    path: "{{ work_dir }}/nifi/data"
+    path: "{{ nifi_dir }}/data"
     state: directory
     owner: "{{ nifi_user }}"
-    group: "{{ app_group }}"
+    group: "{{ nifi_group }}"
 
 - name: Create nifi internals directories
   file:
-    path: "{{ work_dir }}/nifi/data/{{ item }}"
+    path: "{{ nifi_dir }}/data/{{ item }}"
     state: directory
     owner: "{{ nifi_user }}"
-    group: "{{ app_group }}"
+    group: "{{ nifi_group }}"
   loop:
     - content_repository
     - database_repository
@@ -35,13 +39,13 @@
 - name: Add nifi docker compose
   template:
     src: docker-compose.yml.j2
-    dest: "{{ work_dir }}/nifi/docker-compose.nifi.yml"
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
+    dest: "{{ nifi_dir }}/docker-compose.nifi.yml"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
 
 - name: Check if bootstrap needed
   stat:
-    path: "{{ work_dir }}/nifi/bootstrapped"
+    path: "{{ nifi_dir }}/bootstrapped"
   register: p
 
 - name: Bootstrap nifi
@@ -49,4 +53,6 @@
   when: not p.stat.exists
 
 - name: Start nifi
-  shell: "docker-compose -f {{ work_dir }}/nifi/docker-compose.nifi.yml up -d --force-recreate"
+  shell: "docker-compose -f {{ nifi_dir }}/docker-compose.nifi.yml up -d --force-recreate"
+  become: true
+  become_user: "{{ nifi_user }}"
