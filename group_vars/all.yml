@@ -12,6 +12,8 @@ app_name: app
 # used by geerlingguy.docker
 docker_users:
   - "{{ app_user }}"
+  - nifi
+  - zeevo
 
 docker_app_network: app-net
 
@@ -21,3 +23,8 @@ docker_app_network: app-net
 # geerlingguy.pip role:
 pip_install_packages:
   - name: docker
+
+mount_blocks:
+  - path: /data
+    uuid: fc02d13d-4ae1-4f1b-87f6-3787b429068d
+    fstype: ext4
