@@ -1,0 +1,38 @@
+- name: Cleanup bootstrap container
+  shell: docker rm -f nifi-bootstrap
+
+- name: Bootstrap nifi
+  shell: docker run \
+    -d \
+    --name nifi-bootstrap \
+    -e SINGLE_USER_CREDENTIALS_USERNAME=nifi \
+    -e SINGLE_USER_CREDENTIALS_PASSWORD=nifinifinifinifi \
+    apache/nifi
+  become: yes
+  become_user: "{{ nifi_user }}"
+
+- name: Pause for 7 seconds
+  pause:
+    seconds: 7
+
+- name: bootstrap conf out of container
+  shell: "docker cp nifi-bootstrap:/opt/nifi/nifi-current/conf {{ nifi_dir }}/data/conf"
+  become: yes
+  become_user: "{{ nifi_user }}"
+
+- name: Cleanup bootstrap container
+  shell: docker rm -f nifi-bootstrap
+
+- name: Create nifi internals conf directory
+  file:
+    path: "{{ nifi_dir }}/data/conf"
+    state: directory
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+
+- name: Write bootstrap file
+  file:
+    path: "{{ nifi_dir }}/bootstrapped"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+    state: touch

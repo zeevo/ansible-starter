@@ -13,4 +13,5 @@
     - { role: "geerlingguy.docker", tags: "docker" }
     # - { role: "app", tags: "app" }
     - { role: "nifi", tags: "nifi" }
+    - { role: "nifi-registry", tags: "nifi-registry" }
     # - { role: "postgres", tags: "postgres" }
