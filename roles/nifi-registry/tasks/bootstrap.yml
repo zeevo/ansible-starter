@@ -1,0 +1,35 @@
+- name: Cleanup bootstrap container
+  shell: docker rm -f nifi-registry-bootstrap
+
+- name: Bootstrap nifi registry
+  shell: "docker run -d --name nifi-registry-bootstrap {{ nifi_registry_image }} --entrypoint /bin/bash"
+  become: yes
+  become_user: "{{ nifi_registry_user }}"
+
+- name: Pause for 7 seconds
+  pause:
+    seconds: 7
+
+- name: bootstrap conf out of container
+  shell: "docker cp nifi-registry-bootstrap:/opt/nifi-registry/nifi-registry-current/conf {{ nifi_registry_dir }}/data/conf"
+  become: yes
+  become_user: "{{ nifi_user }}"
+  # loop:
+  #   - content_repository
+  #   - database
+  #   - database_repository
+  #   - docs
+  #   - flowfile_repository
+  #   - logs
+  #   - provenance_repository
+  #   - state
+
+- name: Cleanup bootstrap container
+  shell: docker rm -f nifi-registry-bootstrap
+
+- name: Write bootstrap file
+  file:
+    path: "{{ nifi_registry_dir }}/bootstrapped"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+    state: touch
