@@ -1,19 +1,28 @@
 services:
 
-  nifi:
+  nifi-registry:
     image: {{ nifi_registry_image }}
     ports:
-      - {{ nifi_registry_https_port }}:18443
+      - {{ nifi_registry_https_port }}:18080
     environment:
       - NIFI_WEB_HTTPS_PORT=8443
       - NIFI_WEB_HTTPS_HOST=0.0.0.0
       - SINGLE_USER_CREDENTIALS_USERNAME={{ nifi_registry_username }}
       - SINGLE_USER_CREDENTIALS_PASSWORD={{ nifi_registry_password }}
     volumes:
-      - ./data/database_repository:/opt/nifi/nifi-current/database_repository
-      - ./data/flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
-      - ./data/content_repository:/opt/nifi/nifi-current/content_repository
-      - ./data/provenance_repository:/opt/nifi/nifi-current/provenance_repository
-      - ./data/state:/opt/nifi/nifi-current/state
-      - ./data/logs:/opt/nifi/nifi-current/logs
-      - ./data/conf:/opt/nifi/nifi-current/conf
+      - ./data/database_repository:/opt/nifi-registry/nifi-registry-current/database_repository
+      - ./data/database:/opt/nifi-registry/nifi-registry-current/database
+      - ./data/flowfile_repository:/opt/nifi-registry/nifi-registry-current/flowfile_repository
+      - ./data/content_repository:/opt/nifi-registry/nifi-registry-current/content_repository
+      - ./data/provenance_repository:/opt/nifi-registry/nifi-registry-current/provenance_repository
+      - ./data/state:/opt/nifi-registry/nifi-registry-current/state
+      - ./data/logs:/opt/nifi-registry/nifi-registry-current/logs
+      - ./data/conf:/opt/nifi-registry/nifi-registry-current/conf
+    networks:
+      - {{ nifi_registry_network }}
+    logging:
+      driver: none
+
+networks:
+    {{ nifi_registry_network }}:
+      external: true

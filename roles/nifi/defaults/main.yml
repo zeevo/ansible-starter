@@ -5,3 +5,4 @@ nifi_password: nifinifinifinifi
 nifi_image: apache/nifi:1.23.2
 nifi_group: nifi
 nifi_dir: /data/nifi
+nifi_network: nifi

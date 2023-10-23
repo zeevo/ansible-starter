@@ -1,14 +1,14 @@
-- name: Create nifi group
+- name: Create nifi registry group
   group:
     name: "{{ nifi_registry_group }}"
     state: present
 
-- name: Create nifi user
+- name: Create nifi registry user
   user:
     name: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
 
-- name: Create directory for nifi
+- name: Create directory for nifi registry
   file:
     path: "{{ nifi_registry_dir }}"
     state: directory
@@ -29,7 +29,14 @@
     owner: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
   loop:
-    - test
+    - content_repository
+    - database
+    - database_repository
+    - docs
+    - flowfile_repository
+    - logs
+    - provenance_repository
+    - state
 
 - name: Add nifi registry docker compose
   template:
@@ -38,16 +45,20 @@
     owner: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
 
-# - name: Check if bootstrap needed
-#   stat:
-#     path: "{{ nifi_registry_dir }}/bootstrapped"
-#   register: p
+- name: Check if bootstrap needed
+  stat:
+    path: "{{ nifi_registry_dir }}/bootstrapped"
+  register: p
 
-# - name: Bootstrap nifi
-#   include_tasks: bootstrap.yml
-#   when: not p.stat.exists
+- name: Bootstrap nifi registry
+  include_tasks: bootstrap.yml
+  when: not p.stat.exists
+
+- name: Create nifi registry network
+  shell: "docker network create {{ nifi_network }} || true"
+  ignore_errors: true # TODO: Make it so this is not needed by checking first, registering a variable, and using a conditional
 
 - name: Start nifi registry
-  shell: "docker-compose -f {{ nifi_registry_dir }}/docker-compose.yml up -d --force-recreate"
+  shell: "docker compose -f {{ nifi_registry_dir }}/docker-compose.yml up -d --force-recreate"
   become: true
   become_user: "{{ nifi_registry_user }}"

@@ -17,3 +17,12 @@ services:
       - ./data/state:/opt/nifi/nifi-current/state
       - ./data/logs:/opt/nifi/nifi-current/logs
       - ./data/conf:/opt/nifi/nifi-current/conf
+      - ./data/data:/data
+    networks:
+      - {{ nifi_network }}
+    logging:
+      driver: none
+
+networks:
+    {{ nifi_network }}:
+      external: true
