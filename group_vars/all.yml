@@ -26,5 +26,10 @@ pip_install_packages:
 
 mount_blocks:
   - path: /data
-    uuid: fc02d13d-4ae1-4f1b-87f6-3787b429068d
+    uuid: eb19a18c-387e-435d-b38c-5bd96a1cf65e
     fstype: ext4
+
+nifi_extra_volumes:
+  - /data/all
+
+docker_users: [ zeevo ]

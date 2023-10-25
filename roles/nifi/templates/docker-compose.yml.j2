@@ -17,7 +17,9 @@ services:
       - ./data/state:/opt/nifi/nifi-current/state
       - ./data/logs:/opt/nifi/nifi-current/logs
       - ./data/conf:/opt/nifi/nifi-current/conf
-      - ./data/data:/data
+{% for item in nifi_extra_volumes %}
+      - {{ item }}:{{ item }}
+{% endfor %}
     networks:
       - {{ nifi_network }}
     logging:

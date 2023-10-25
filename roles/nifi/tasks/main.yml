@@ -15,13 +15,6 @@
     owner: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
 
-- name: Create data directory for nifi
-  file:
-    path: "{{ nifi_dir }}/data"
-    state: directory
-    owner: "{{ nifi_user }}"
-    group: "{{ nifi_group }}"
-
 - name: Create nifi internals directories
   file:
     path: "{{ nifi_dir }}/data/{{ item }}"
@@ -35,7 +28,6 @@
     - logs
     - provenance_repository
     - state
-    - data
 
 - name: Add nifi docker compose
   template:
@@ -62,12 +54,17 @@
   become: true
   become_user: "{{ nifi_user }}"
 
-- name: Add backup script
+- name: Add backup.sh
   template:
     src: backup.sh.j2
     dest: "{{ nifi_dir }}/backup.sh"
 
-- name: Add backup script
+- name: Add restore.sh
   template:
     src: restore.sh.j2
     dest: "{{ nifi_dir }}/restore.sh"
+
+- name: Add get_shell
+  template:
+    src: get_shell.sh.j2
+    dest: "{{ nifi_dir }}/get_shell.sh"

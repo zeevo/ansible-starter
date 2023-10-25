@@ -1,17 +1,14 @@
 - name: All
   hosts: main
-  become: yes
   # vars_files:
   #   - group_vars/vault.yml
   roles:
-    - { role: "mount", tags: "mount" }
-    # - { role: "ping", tags: "ping" }
-    # - { role: "user", tags: "user" }
-    # - { role: "patch", tags: "patch" }
-    # - { role: "work-dir", tags: "work-dir" }
-    # - { role: "geerlingguy.pip", tags: "pip" }
-    - { role: "geerlingguy.docker", tags: "docker" }
-    # - { role: "app", tags: "app" }
-    - { role: "nifi", tags: "nifi" }
-    - { role: "nifi-registry", tags: "nifi-registry" }
+    - role: "mount"
+      tags: "mount"
+    - role: "docker"
+      tags: "docker"
+    - role: "nifi"
+      tags: "nifi"
+    # - role: "nifi-registry"
+    #   tags: "nifi-registry"
     # - { role: "postgres", tags: "postgres" }

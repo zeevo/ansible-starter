@@ -1,0 +1,13 @@
+- name: Check for docker
+  shell: which docker
+  register: docker_exists
+  ignore_errors: true
+
+- name: Install docker
+  shell: curl -sSL https://get.docker.com | sh
+  when: docker_exists.stdout == ""
+
+- name: Add users to docker group
+  shell: usermod -aG docker {{ item }}
+  become: yes
+  loop: "{{ docker_users }}"

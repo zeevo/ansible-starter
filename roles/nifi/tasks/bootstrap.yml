@@ -8,8 +8,6 @@
     -e SINGLE_USER_CREDENTIALS_USERNAME=nifi \
     -e SINGLE_USER_CREDENTIALS_PASSWORD=nifinifinifinifi \
     apache/nifi
-  become: yes
-  become_user: "{{ nifi_user }}"
 
 - name: Pause for 7 seconds
   pause:
@@ -17,8 +15,6 @@
 
 - name: bootstrap conf out of container
   shell: "docker cp nifi-bootstrap:/opt/nifi/nifi-current/conf {{ nifi_dir }}/data/conf"
-  become: yes
-  become_user: "{{ nifi_user }}"
 
 - name: Cleanup bootstrap container
   shell: docker rm -f nifi-bootstrap
