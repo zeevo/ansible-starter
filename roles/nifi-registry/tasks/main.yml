@@ -37,6 +37,7 @@
     - logs
     - provenance_repository
     - state
+    - all
 
 - name: Add nifi registry docker compose
   template:
