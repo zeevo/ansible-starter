@@ -8,9 +8,20 @@
     name: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
 
+- name: Add nifi user to docker group
+  shell: usermod -aG docker {{ nifi_user }}
+  become: yes
+
 - name: Create directory for nifi
   file:
     path: "{{ nifi_dir }}"
+    state: directory
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+
+- name: Create directory for nifi
+  file:
+    path: "{{ nifi_dir }}/nifi_certs"
     state: directory
     owner: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
@@ -51,20 +62,24 @@
 
 - name: Start nifi
   shell: "docker compose -f {{ nifi_dir }}/docker-compose.yml up -d --force-recreate --remove-orphans"
-  become: true
-  become_user: "{{ nifi_user }}"
 
 - name: Add backup.sh
   template:
     src: backup.sh.j2
     dest: "{{ nifi_dir }}/backup.sh"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
 
 - name: Add restore.sh
   template:
     src: restore.sh.j2
     dest: "{{ nifi_dir }}/restore.sh"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
 
 - name: Add get_shell
   template:
     src: get_shell.sh.j2
     dest: "{{ nifi_dir }}/get_shell.sh"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"

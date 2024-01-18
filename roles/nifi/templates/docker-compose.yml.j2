@@ -1,30 +1,101 @@
+x-nifi-environment: &nifi-environment
+  NIFI_WEB_HTTPS_PORT: {{ nifi_web_https_port }}
+  NIFI_CLUSTER_IS_NODE: {{ nifi_cluster_is_node }}
+  NIFI_ZK_CONNECT_STRING: {{ nifi_zk_connect_string }}
+  NIFI_ELECTION_MAX_WAIT: {{ nifi_election_max_wait }}
+  NIFI_SENSITIVE_PROPS_KEY: {{ nifi_sensitive_props_key }}
+  NIFI_CLUSTER_NODE_PROTOCOL_PORT: 8082
+  SINGLE_USER_CREDENTIALS_USERNAME: {{ nifi_single_user_credentials_username }}
+  SINGLE_USER_CREDENTIALS_PASSWORD: {{ nifi_single_user_credentials_password }}
+  NIFI_SECURITY_USER_AUTHORIZER: {{ nifi_security_user_authorizer }}
+  NIFI_SECURITY_USER_LOGIN_IDENTITY_PROVIDER: {{ nifi_security_user_login_identity_provider }}
+  INITIAL_ADMIN_IDENTITY: {{ nifi_initial_admin_identity }}
+  AUTH: tls
+  KEYSTORE_TYPE: JKS
+  KEYSTORE_PASSWORD: {{ nifi_keystore_password }}
+  TRUSTSTORE_TYPE: JKS
+  TRUSTSTORE_PASSWORD: {{ nifi_truststore_password }}
+
 services:
 
-  nifi:
-    image: {{ nifi_image }}
-    ports:
-      - {{ nifi_https_port }}:8443
+{% if include_zookeper %}
+  zookeeper:
+    # user: {{ nifi_user }}
+    container_name: zookeeper
+    image: bitnami/zookeeper:latest
     environment:
-      - NIFI_WEB_HTTPS_PORT=8443
-      - NIFI_WEB_HTTPS_HOST=0.0.0.0
-      - SINGLE_USER_CREDENTIALS_USERNAME={{ nifi_username }}
-      - SINGLE_USER_CREDENTIALS_PASSWORD={{ nifi_password }}
-    volumes:
-      - ./data/database_repository:/opt/nifi/nifi-current/database_repository
-      - ./data/flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
-      - ./data/content_repository:/opt/nifi/nifi-current/content_repository
-      - ./data/provenance_repository:/opt/nifi/nifi-current/provenance_repository
-      - ./data/state:/opt/nifi/nifi-current/state
-      - ./data/logs:/opt/nifi/nifi-current/logs
-      - ./data/conf:/opt/nifi/nifi-current/conf
-{% for item in nifi_extra_volumes %}
-      - {{ item }}:{{ item }}
-{% endfor %}
-    networks:
-      - {{ nifi_network }}
-    logging:
-      driver: none
+      - ALLOW_ANONYMOUS_LOGIN=yes
+{% endif %}
 
-networks:
-    {{ nifi_network }}:
-      external: true
+{% if generate_certs %}
+  nifi-toolkit:
+    # user: {{ nifi_user }}
+    image: apache/nifi-toolkit:latest
+    volumes:
+      - {{ nifi_dir }}/nifi_certs:/opt/certs
+    entrypoint: 
+      - "bash"
+      - "-c"
+      # Generate the keystore and trustore of each node in the cluster
+      # Adjust the number -n to the number of nodes you want
+      - > 
+          /opt/nifi-toolkit/*/bin/tls-toolkit.sh standalone
+          --subjectAlternativeNames {{ nifi_name }},localhost 
+          -o /opt/certs 
+          -n {{ nifi_name }}
+          -P truststorepass 
+          -K keystorepass 
+          -S keystorepass;
+          chown -R nifi:nifi /opt/certs
+{% endif %}
+
+  {{ nifi_name }}:
+    image: {{ nifi_image }}
+    # user: {{ nifi_user }}
+    depends_on:
+      nifi-toolkit:
+        condition: service_completed_successfully
+    volumes:
+      - {{ nifi_dir }}/nifi_certs:/opt/certs
+      - {{ nifi_data_dir }}/conf:/opt/nifi/nifi-current/conf
+      - {{ nifi_data_dir }}/extensions:/opt/nifi/nifi-current/extensions
+      - {{ nifi_data_dir }}/database_repository:/opt/nifi/nifi-current/database_repository
+      - {{ nifi_data_dir }}/flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
+      - {{ nifi_data_dir }}/content_repository:/opt/nifi/nifi-current/content_repository
+      - {{ nifi_data_dir }}/provenance_repository:/opt/nifi/nifi-current/provenance_repository
+      - {{ nifi_data_dir }}/state:/opt/nifi/nifi-current/state
+      - {{ nifi_data_dir }}/logs:/opt/nifi/nifi-current/logs
+      # Support custom nar extensions
+      # - ./nifi-starter-nar/target/:/opt/nifi/nifi-current/nar_extensions
+    ports:
+      - {{ nifi_https_port }}:{{ nifi_https_port }}
+    environment:
+      <<: *nifi-environment
+      NIFI_CLUSTER_ADDRESS: {{ nifi_name }}
+      NIFI_WEB_HTTPS_HOST: {{ nifi_name }}
+      KEYSTORE_PATH: /opt/certs/{{ nifi_name }}/keystore.jks
+      TRUSTSTORE_PATH: /opt/certs/{{ nifi_name }}/truststore.jks
+  
+  # If you want another node, uncomment the code below
+  #
+  # nifi-1:
+  #   image: apache/nifi:2.0.0-M1
+  #   depends_on:
+  #     nifi-toolkit:
+  #       condition: service_completed_successfully
+  #   volumes:
+  #     - nifi_certs:/opt/certs
+  #   environment:
+  #     <<: *nifi-environment
+  #     NIFI_CLUSTER_ADDRESS: nifi-1
+  #     NIFI_WEB_HTTPS_HOST: nifi-1
+  #     KEYSTORE_PATH: "/opt/certs/nifi-1/keystore.jks"
+  #     TRUSTSTORE_PATH: "/opt/certs/nifi-1/truststore.jks"
+
+{% if include_registry %}
+  registry:
+    # user: {{ nifi_user }}
+    image: apache/nifi-registry:latest
+    ports:
+      - 18080:18080
+{% endif %}

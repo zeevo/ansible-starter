@@ -7,14 +7,39 @@
     --name nifi-bootstrap \
     -e SINGLE_USER_CREDENTIALS_USERNAME=nifi \
     -e SINGLE_USER_CREDENTIALS_PASSWORD=nifinifinifinifi \
-    apache/nifi
+    apache/nifi:2.0.0-M1
 
-- name: Pause for 7 seconds
+- name: Pause for 15 seconds
   pause:
-    seconds: 7
+    seconds: 15
 
 - name: bootstrap conf out of container
-  shell: "docker cp nifi-bootstrap:/opt/nifi/nifi-current/conf {{ nifi_dir }}/data/conf"
+  shell: "docker cp nifi-bootstrap:/opt/nifi/nifi-current/conf {{ nifi_data_dir }}/conf"
+
+- name: Copy internals
+  shell: "docker cp nifi-bootstrap:/opt/nifi/nifi-current/{{ item }} {{ nifi_data_dir }}/"
+  loop:
+    - conf
+    - content_repository
+    - database_repository
+    - flowfile_repository
+    - state
+    - logs
+
+- name: Change permissions on /remote/file/path to ansible:user so we can write to it 
+  file:
+    path: "{{ nifi_data_dir }}/{{ item }}"
+    owner: root (or other)
+    recurse: true 
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+  loop:
+    - conf
+    - content_repository
+    - database_repository
+    - flowfile_repository
+    - state
+    - logs
 
 - name: Cleanup bootstrap container
   shell: docker rm -f nifi-bootstrap
