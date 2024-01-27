@@ -65,8 +65,16 @@
     owner: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
 
+- name: Add authorizers.xml
+  when: nifi_single_user_mode == false
+  template:
+    src: authorizers.xml.j2
+    dest: "{{ nifi_data_dir }}/conf/authorizers.xml"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+
 - name: Create truststore and keystore
-  shell: 'docker run apache/nifi-toolkit:latest -v {{ nifi_home_dir }}/nifi_certs:/opt/certs ---entrypoint "bash -c /opt/nifi-toolkit/*/bin/tls-toolkit.sh standalone --subjectAlternativeNames {{ nifi_name }},localhost -o /opt/certs -n {{ nifi_name }} -P truststorepass -K keystorepass -S keystorepass; chown -R nifi:nifi /opt/certs"'
+  shell: 'docker run apache/nifi-toolkit:latest -v {{ nifi_home_dir }}/nifi_certs:/opt/certs ---entrypoint "bash -c /opt/nifi-toolkit/*/bin/tls-toolkit.sh standalone -O --subjectAlternativeNames {{ nifi_name }},localhost -o /opt/certs -n {{ nifi_name }} -P truststorepass -K keystorepass -S keystorepass; chown -R nifi:nifi /opt/certs"'
 
 - name: Make tmp cert dir
   file:
@@ -81,7 +89,8 @@
 
 - name: Add users to truststore
   loop: "{{ nifi_users }}"
-  shell: 'docker run -v /tmp/ansible-nifi-certs:/tmp/ansible-nifi-certs -v {{ nifi_home_dir }}/nifi_certs:/opt/certs --entrypoint "keytool -import -file /tmp/ansible-nifi-certs/{{ item.cert }} -alias {{ item.alias }} -keystore /opt/certs/nifi-0/truststore.jks -storepass {{ nifi_truststore_password }}" openjdk'
+  shell: "docker run -v /tmp/ansible-nifi-certs:/tmp/ansible-nifi-certs -v {{ nifi_home_dir }}/nifi_certs:/opt/certs openjdk keytool -noprompt -import -file /tmp/ansible-nifi-certs/{{ item.cert }} -alias {{ item.alias }} -keystore /opt/certs/nifi-0/truststore.jks -storepass {{ nifi_truststore_password }}"
+  ignore_errors: true
 
 - name: Create nifi network
   shell: "docker network create {{ nifi_network }} || true"
