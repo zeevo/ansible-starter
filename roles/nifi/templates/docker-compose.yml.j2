@@ -5,11 +5,15 @@ x-nifi-environment: &nifi-environment
   NIFI_ELECTION_MAX_WAIT: {{ nifi_election_max_wait }}
   NIFI_SENSITIVE_PROPS_KEY: {{ nifi_sensitive_props_key }}
   NIFI_CLUSTER_NODE_PROTOCOL_PORT: 8082
+{% if nifi_single_user_mode  %}
   SINGLE_USER_CREDENTIALS_USERNAME: {{ nifi_single_user_credentials_username }}
   SINGLE_USER_CREDENTIALS_PASSWORD: {{ nifi_single_user_credentials_password }}
-  NIFI_SECURITY_USER_AUTHORIZER: {{ nifi_security_user_authorizer }}
-  NIFI_SECURITY_USER_LOGIN_IDENTITY_PROVIDER: {{ nifi_security_user_login_identity_provider }}
+  NIFI_SECURITY_USER_AUTHORIZER: single-user-authorizer
+  NIFI_SECURITY_USER_LOGIN_IDENTITY_PROVIDER: single-user-provider
+{% endif %}
+{% if nifi_initial_admin_identity is defined %}
   INITIAL_ADMIN_IDENTITY: {{ nifi_initial_admin_identity }}
+{% endif %}
   AUTH: tls
   KEYSTORE_TYPE: JKS
   KEYSTORE_PASSWORD: {{ nifi_keystore_password }}
@@ -27,36 +31,11 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
 {% endif %}
 
-{% if generate_certs %}
-  nifi-toolkit:
-    # user: {{ nifi_user }}
-    image: apache/nifi-toolkit:latest
-    volumes:
-      - {{ nifi_dir }}/nifi_certs:/opt/certs
-    entrypoint: 
-      - "bash"
-      - "-c"
-      # Generate the keystore and trustore of each node in the cluster
-      # Adjust the number -n to the number of nodes you want
-      - > 
-          /opt/nifi-toolkit/*/bin/tls-toolkit.sh standalone
-          --subjectAlternativeNames {{ nifi_name }},localhost 
-          -o /opt/certs 
-          -n {{ nifi_name }}
-          -P truststorepass 
-          -K keystorepass 
-          -S keystorepass;
-          chown -R nifi:nifi /opt/certs
-{% endif %}
-
   {{ nifi_name }}:
     image: {{ nifi_image }}
     # user: {{ nifi_user }}
-    depends_on:
-      nifi-toolkit:
-        condition: service_completed_successfully
     volumes:
-      - {{ nifi_dir }}/nifi_certs:/opt/certs
+      - {{ nifi_home_dir }}/nifi_certs:/opt/certs
       - {{ nifi_data_dir }}/conf:/opt/nifi/nifi-current/conf
       - {{ nifi_data_dir }}/extensions:/opt/nifi/nifi-current/extensions
       - {{ nifi_data_dir }}/database_repository:/opt/nifi/nifi-current/database_repository

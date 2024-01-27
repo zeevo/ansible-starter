@@ -2,12 +2,7 @@
   shell: docker rm -f nifi-bootstrap
 
 - name: Bootstrap nifi
-  shell: docker run \
-    -d \
-    --name nifi-bootstrap \
-    -e SINGLE_USER_CREDENTIALS_USERNAME=nifi \
-    -e SINGLE_USER_CREDENTIALS_PASSWORD=nifinifinifinifi \
-    apache/nifi:2.0.0-M1
+  shell: "docker run -d --name nifi-bootstrap -e SINGLE_USER_CREDENTIALS_USERNAME={{ nifi_single_user_credentials_username }} -e SINGLE_USER_CREDENTIALS_PASSWORD={{ nifi_single_user_credentials_password }} {{ nifi_image }}"
 
 - name: Pause for 15 seconds
   pause:
@@ -46,14 +41,14 @@
 
 - name: Create nifi internals conf directory
   file:
-    path: "{{ nifi_dir }}/data/conf"
+    path: "{{ nifi_data_dir }}/conf"
     state: directory
     owner: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
 
 - name: Write bootstrap file
   file:
-    path: "{{ nifi_dir }}/bootstrapped"
+    path: "{{ nifi_home_dir }}/bootstrapped"
     owner: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
     state: touch

@@ -1,16 +1,16 @@
 nifi_name: nifi-0
 nifi_user: nifi # This user MUST have UID 1000
 nifi_https_port: 8443
-nifi_username: nifi
-nifi_password: nifinifinifinifi
 nifi_image: apache/nifi:2.0.0-M1
 nifi_group: nifi
-nifi_dir: /data/nifi
-nifi_data_dir: "{{ nifi_dir }}/data"
+nifi_home_dir: /home/nifi
+nifi_data_dir: "{{ nifi_home_dir }}/data"
 nifi_network: nifi
 nifi_extra_volumes: []
 
 # base environment
+# TOOD: allow flipping between cluster and standalone mode
+nifi_mode: standalone
 nifi_cluster_is_node: true
 nifi_web_https_port: 8443
 nifi_zk_connect_string: zookeeper:2181
@@ -18,9 +18,19 @@ nifi_election_max_wait: 30 sec
 nifi_sensitive_props_key: my-random-string
 nifi_single_user_credentials_username: nifi
 nifi_single_user_credentials_password: nifinifinifinifi
+nifi_single_user_mode: false
 nifi_security_user_authorizer: single-user-authorizer
 nifi_security_user_login_identity_provider: single-user-provider
 nifi_initial_admin_identity: nifi
+
+# TODO: DNs of the users
+nifi_groups: []
+nifi_users: []
+
+nifi_cluster_node_identities:
+  - nifi-0
+  - nifi-1
+
 nifi_keystore_password: keystorepass
 nifi_truststore_password: truststorepass
 generate_certs: true
