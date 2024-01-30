@@ -58,7 +58,21 @@
 {% endfor %}
         </policy>
         <policy identifier="0c1817ad-f37b-4897-a884-f8f8f8c53eb7" resource="/proxy" action="W">
-            <group identifier="NIFI_CLUSTER" />
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
+        </policy>
+        <policy identifier="a44e53a5-2c44-3975-92bb-33d9cadb4d84"
+            resource="/data/process-groups/{{ nifi_root_pg_id }}" action="R">
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
+        </policy>
+        <policy identifier="8660ed3f-8d31-38a0-b1a6-ed922f173986"
+            resource="/data/process-groups/{{ nifi_root_pg_id }}" action="W">
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
         </policy>
     </policies>
 </authorizations>

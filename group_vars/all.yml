@@ -1,18 +1,13 @@
 # Working dir
 work_dir: /data
 
-# App setup ------------------------------------------
+# App ------------------------------------------
 app_user: app-user
 app_group: app-group
 app_name: app
 
-# geerlingguy.docker ---------------------------------
-#
-# Users that are allowed to use docker
-# used by geerlingguy.docker
+# docker
 docker_users:
-  - "{{ app_user }}"
-  - nifi
   - zeevo
 
 docker_app_network: app-net
@@ -28,8 +23,37 @@ mount_blocks:
   - path: /data
     uuid: eb19a18c-387e-435d-b38c-5bd96a1cf65e
     fstype: ext4
+    opts: nofail
+  - path: /data2
+    uuid: f140f752-dcd2-479c-bb4f-a0c7242ed39b
+    fstype: ext4
+    opts: nofail
 
-nifi_extra_volumes:
-  - /data/all
+# nifi
+nifi_user: zeevo # This user MUST have UID 1000
+nifi_home_dir: /data/nifi
+nifi_root_pg_id: 096e2d7c-018d-1000-aa23-cf3447a03953
+nifi_users:
+  - id: adssads
+    dn: CN=admin
+    cert: zeevo.pem
+    alias: zeevo
+    groups:
+      - all
 
-docker_users: [ zeevo ]
+nifi_groups:
+  - name: all
+    id: BD43FA77-AAEE-44C4-AC8A-0046389BCDBB
+    permissions:
+      - flow
+      - restricted-components
+      - tenants
+      - policies
+      - controller
+
+nifi_nodes:
+  - dn: CN=nifi-0, OU=NIFI
+
+apt_packages:
+  - git
+  - tmux

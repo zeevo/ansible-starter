@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <tenants>
     <groups>
-
-
         {% for group in nifi_groups %}
                 <group identifier="{{ group.id }}" name="{{ group.name }}">
             {% for user in nifi_users %}
-                {% if group.name in user.groups %}
+                {% if group.name in user.groups | default([]) %}
                         <user identifier="{{ user.id }}" />
                 {% endif %}
             {% endfor %}
                 </group>
         {% endfor %}
-
-        <group identifier="NIFI_CLUSTER" name="NIFI_CLUSTER">
-            {% for node in nifi_nodes %}
-                <user identifier="{{ node.dn }}" />
-            {% endfor %}
-        </group>
-
     </groups>
     <users>
 {% for user in nifi_users %}
