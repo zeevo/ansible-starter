@@ -135,4 +135,4 @@
 
 - name: Message
   debug:
-    msg: IMPORTANT -- set the nifi_root_pg_id variable for correct permissions
+    msg: IMPORTANT -- set the nifi_root_pg_id variable for correct clustering permissions
