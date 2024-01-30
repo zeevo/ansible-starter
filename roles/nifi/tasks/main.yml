@@ -19,6 +19,13 @@
     owner: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
 
+- name: Create directory for nifi scripts
+  file:
+    path: "{{ nifi_home_dir }}/scripts"
+    state: directory
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+
 - name: Create nifi internals directories
   file:
     path: "{{ nifi_home_dir }}/data/{{ item }}"
@@ -86,6 +93,12 @@
   copy:
     src: "{{ item.cert }}"
     dest: "/tmp/ansible-nifi-certs/{{ item.cert }}"
+
+- name: Copy make_cert script
+  loop: "{{ nifi_users }}"
+  copy:
+    src: make_cert.sh
+    dest: "{{ nifi_home_dir }}/scripts/make_cert.sh"
 
 - name: Add users to truststore
   loop: "{{ nifi_users }}"
