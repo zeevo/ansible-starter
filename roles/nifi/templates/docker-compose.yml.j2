@@ -44,6 +44,9 @@ services:
       - {{ nifi_data_dir }}/provenance_repository:/opt/nifi/nifi-current/provenance_repository
       - {{ nifi_data_dir }}/state:/opt/nifi/nifi-current/state
       - {{ nifi_data_dir }}/logs:/opt/nifi/nifi-current/logs
+{% for item in nifi_extra_docker_volumes %}
+      - {{ item }}
+{% endfor %}
       # Support custom nar extensions
       # - ./nifi-starter-nar/target/:/opt/nifi/nifi-current/nar_extensions
     ports:
