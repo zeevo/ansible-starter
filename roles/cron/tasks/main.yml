@@ -1,16 +1,8 @@
-- name: Create cron directory
-  file:
-    path: "{{ work_dir }}/cron"
-    state: directory
-    owner: "{{ cron_user }}"
-    group: "{{ cron_group }}"
-  become: yes
-
 - name: Add crons
   ansible.builtin.cron:
     name: "{{ item.name }}"
     minute: "{{ item.minute }}"
     hour: "{{ item.hour }}"
-    job: "{{ item.command }} >> {{ work_dir }}/cron/{{ item.log_file }}"
-    user: "{{ cron_user }}"
+    user: "{{ item.user }}"
+    job: "{{ item.job }}"
   loop: "{{ cron }}"
