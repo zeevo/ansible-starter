@@ -80,6 +80,13 @@
     owner: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
 
+- name: Add nifi.properties
+  template:
+    src: nifi.properties.j2
+    dest: "{{ nifi_data_dir }}/conf/nifi.properties"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+
 - name: Create truststore and keystore
   shell: 'docker run apache/nifi-toolkit:latest -v {{ nifi_home_dir }}/nifi_certs:/opt/certs ---entrypoint "bash -c /opt/nifi-toolkit/*/bin/tls-toolkit.sh standalone -O --subjectAlternativeNames {{ nifi_name }},localhost -o /opt/certs -n {{ nifi_name }} -P truststorepass -K keystorepass -S keystorepass; chown -R nifi:nifi /opt/certs"'
 

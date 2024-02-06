@@ -22,9 +22,8 @@ x-nifi-environment: &nifi-environment
 
 services:
 
-{% if include_zookeper %}
+{% if nifi_include_zookeeper %}
   zookeeper:
-    # user: {{ nifi_user }}
     container_name: zookeeper
     image: bitnami/zookeeper:latest
     environment:
@@ -33,7 +32,6 @@ services:
 
   {{ nifi_name }}:
     image: {{ nifi_image }}
-    # user: {{ nifi_user }}
     volumes:
       - {{ nifi_home_dir }}/nifi_certs:/opt/certs
       - {{ nifi_data_dir }}/conf:/opt/nifi/nifi-current/conf
@@ -57,26 +55,9 @@ services:
       NIFI_WEB_HTTPS_HOST: {{ nifi_name }}
       KEYSTORE_PATH: /opt/certs/{{ nifi_name }}/keystore.jks
       TRUSTSTORE_PATH: /opt/certs/{{ nifi_name }}/truststore.jks
-  
-  # If you want another node, uncomment the code below
-  #
-  # nifi-1:
-  #   image: apache/nifi:2.0.0-M1
-  #   depends_on:
-  #     nifi-toolkit:
-  #       condition: service_completed_successfully
-  #   volumes:
-  #     - nifi_certs:/opt/certs
-  #   environment:
-  #     <<: *nifi-environment
-  #     NIFI_CLUSTER_ADDRESS: nifi-1
-  #     NIFI_WEB_HTTPS_HOST: nifi-1
-  #     KEYSTORE_PATH: "/opt/certs/nifi-1/keystore.jks"
-  #     TRUSTSTORE_PATH: "/opt/certs/nifi-1/truststore.jks"
 
-{% if include_registry %}
+{% if nifi_include_registry %}
   registry:
-    # user: {{ nifi_user }}
     image: apache/nifi-registry:latest
     ports:
       - 18080:18080

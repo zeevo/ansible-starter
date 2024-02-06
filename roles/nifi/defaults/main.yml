@@ -7,8 +7,7 @@ nifi_home_dir: /home/nifi
 nifi_data_dir: "{{ nifi_home_dir }}/data"
 nifi_network: nifi
 
-# base environment
-# TOOD: allow flipping between cluster and standalone mode
+# Base environment
 nifi_cluster_is_node: true
 nifi_web_https_port: 8443
 nifi_zk_connect_string: zookeeper:2181
@@ -20,7 +19,12 @@ nifi_single_user_mode: false
 nifi_security_user_authorizer: single-user-authorizer
 nifi_security_user_login_identity_provider: single-user-provider
 
-# TODO: DNs of the users
+# Core
+nifi_archive_enabled: true
+
+# Provenance
+nifi_provenance_repository_max_storage_size: 10 GB
+
 nifi_groups: []
 nifi_users: []
 
@@ -30,5 +34,5 @@ nifi_nodes:
 nifi_keystore_password: keystorepass
 nifi_truststore_password: truststorepass
 generate_certs: true
-include_zookeper: true
-include_registry: true
+nifi_include_zookeeper: true
+nifi_include_registry: true
