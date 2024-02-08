@@ -1,7 +1,7 @@
 services:
 
   zookeeper:
-    image: bitnami/zookeeper:latest
+    image: {{ zookeeper_image }}
     networks:
       - zookeeper_network
     container_name: zookeeper
