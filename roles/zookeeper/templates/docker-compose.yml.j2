@@ -1,0 +1,14 @@
+services:
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    networks:
+      - zookeeper_network
+    container_name: zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+networks:
+  zookeeper_network:
+    name: {{ zookeeper_network }}
+    external: true
