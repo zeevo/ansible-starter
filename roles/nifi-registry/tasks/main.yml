@@ -1,65 +1,95 @@
-- name: Create nifi registry group
+- name: Create registry group
   group:
     name: "{{ nifi_registry_group }}"
     state: present
 
-- name: Create nifi registry user
+- name: Create registry user
   user:
     name: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
 
-- name: Create directory for nifi registry
+- name: Add registry user to docker group
+  shell: usermod -aG docker {{ nifi_registry_user }}
+  become: true
+
+- name: Create directory for registry
   file:
-    path: "{{ nifi_registry_dir }}"
+    path: "{{ nifi_registry_home_dir }}"
     state: directory
     owner: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
 
-- name: Create data directory for nifi registry
-  file:
-    path: "{{ nifi_registry_dir }}/data"
-    state: directory
+- name: Add registry docker compose
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ nifi_registry_home_dir }}/docker-compose.yml"
     owner: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
 
 - name: Create nifi registry internals directories
   file:
-    path: "{{ nifi_registry_dir }}/data/{{ item }}"
+    path: "{{ nifi_registry_data_dir }}/{{ item }}"
     state: directory
     owner: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
   loop:
-    - content_repository
-    - database
-    - database_repository
-    - docs
-    - flowfile_repository
-    - logs
-    - provenance_repository
-    - state
-    - all
+    - conf
 
-- name: Add nifi registry docker compose
+- name: Add nifi docker compose
   template:
     src: docker-compose.yml.j2
-    dest: "{{ nifi_registry_dir }}/docker-compose.yml"
+    dest: "{{ nifi_registry_home_dir }}/docker-compose.yml"
     owner: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
 
 - name: Check if bootstrap needed
   stat:
-    path: "{{ nifi_registry_dir }}/bootstrapped"
+    path: "{{ nifi_registry_home_dir }}/bootstrapped"
   register: p
 
-- name: Bootstrap nifi registry
+- name: Bootstrap nifi
   include_tasks: bootstrap.yml
   when: not p.stat.exists
 
-- name: Create nifi registry network
-  shell: "docker network create {{ nifi_network }} || true"
-  ignore_errors: true # TODO: Make it so this is not needed by checking first, registering a variable, and using a conditional
+- name: Add authorizations.xml
+  template:
+    src: authorizations.xml.j2
+    dest: "{{ nifi_registry_data_dir }}/conf/authorizations.xml"
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
 
-- name: Start nifi registry
-  shell: "docker compose -f {{ nifi_registry_dir }}/docker-compose.yml up -d --force-recreate"
-  become: true
-  become_user: "{{ nifi_registry_user }}"
+- name: Add users.xml
+  template:
+    src: users.xml.j2
+    dest: "{{ nifi_registry_data_dir }}/conf/users.xml"
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
+
+- name: Add authorizers.xml
+  template:
+    src: authorizers.xml.j2
+    dest: "{{ nifi_registry_data_dir }}/conf/authorizers.xml"
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
+
+- name: Create truststore and keystore
+  shell: "docker run --user root -v {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs apache/nifi-toolkit:latest tls-toolkit standalone -O --subjectAlternativeNames {{ nifi_registry_name }},localhost -o /opt/certs -n {{ nifi_registry_name }} -P {{ nifi_registry_truststore_password }} -K {{ nifi_registry_keystore_password }} -S {{ nifi_registry_keystore_password }}"
+
+- name: Change permissions on /remote/file/path to ansible:user so we can write to it
+  file:
+    path: "{{ nifi_registry_home_dir }}/nifi_certs"
+    recurse: true
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
+
+- name: Add users to truststore
+  loop: "{{ nifi_registry_users }}"
+  shell: "docker run -v /tmp/ansible-nifi-certs:/tmp/ansible-nifi-certs -v {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs openjdk keytool -noprompt -import -file /tmp/ansible-nifi-certs/{{ item.cert }} -alias {{ item.alias }} -keystore /opt/certs/{{ nifi_registry_name }}/truststore.jks -storepass {{ nifi_registry_truststore_password }}"
+  ignore_errors: true
+
+- name: Create registry network
+  shell: "docker network create {{ nifi_registry_network }} || true"
+  ignore_errors: true
+
+- name: Start registry
+  shell: "docker compose -f {{ nifi_registry_home_dir }}/docker-compose.yml up -d --force-recreate --remove-orphans"

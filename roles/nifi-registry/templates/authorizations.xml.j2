@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<authorizations>
+    <policies>
+
+        <policy identifier="1CE953DF-5FCB-4DC3-A964-E4E25E202CD9" resource="/actuator" action="R">
+{% for group in nifi_registry_groups %}
+    {% if 'actuator' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+
+        <policy identifier="1CE953DF-5FCB-4DC3-A964-E4E25E202CD9" resource="/proxy" action="R">
+{% for group in nifi_registry_groups %}
+    {% if 'proxy' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+        <policy identifier="C53B1B4D-0A6B-4575-B835-76D0782B9BF0" resource="/proxy" action="W">
+{% for group in nifi_registry_groups %}
+    {% if 'proxy' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+
+        <policy identifier="92EB50D6-A7EB-441A-A7CC-78A3E3B3D67B" resource="/buckets" action="R">
+{% for group in nifi_registry_groups %}
+    {% if 'buckets' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+        <policy identifier="7F2ABDFA-08CC-4A7C-BF6A-5F6F100E6003" resource="/buckets" action="W">
+{% for group in nifi_registry_groups %}
+    {% if 'buckets' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+        <policy identifier="7496417B-02F7-4297-A6A5-AE468D776784" resource="/buckets" action="D">
+{% for group in nifi_registry_groups %}
+    {% if 'buckets' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+
+
+        <policy identifier="D972B7D1-8892-4FC4-934C-9D61C56D1F83" resource="/policies" action="R">
+{% for group in nifi_registry_groups %}
+    {% if 'policies' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+        <policy identifier="03A7992D-E250-4262-ADBE-3DBB0DDCD4FA" resource="/policies" action="W">
+{% for group in nifi_registry_groups %}
+    {% if 'policies' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+        <policy identifier="84647E2A-F0BB-4C43-B853-A2F4C4281840" resource="/policies" action="D">
+{% for group in nifi_registry_groups %}
+    {% if 'policies' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+
+        <policy identifier="BE8D03FD-DA67-4BF5-956A-3EC9F825BD1C" resource="/swagger" action="R">
+{% for group in nifi_registry_groups %}
+    {% if 'swagger' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+
+        <policy identifier="19E0E862-C2AC-42D6-B0C9-BE1FA8235E53" resource="/tenants" action="R">
+{% for group in nifi_registry_groups %}
+    {% if 'tenants' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+        <policy identifier="D6A3E230-7BEC-4BF9-9513-65765C73CB14" resource="/tenants" action="W">
+{% for group in nifi_registry_groups %}
+    {% if 'tenants' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+        <policy identifier="92AFFA54-6308-4115-A35B-84614659CD1C" resource="/tenants" action="D">
+{% for group in nifi_registry_groups %}
+    {% if 'tenants' in group.permissions %}
+            <group identifier="{{ group.id }}"/>
+    {% endif %}
+{% endfor %}
+        </policy>
+
+    </policies>
+</authorizations>

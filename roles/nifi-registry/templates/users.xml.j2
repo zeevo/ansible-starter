@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tenants>
+    <groups>
+        {% for group in nifi_registry_groups %}
+                <group identifier="{{ group.id }}" name="{{ group.name }}">
+            {% for user in nifi_registry_users %}
+                {% if group.name in user.groups | default([]) %}
+                        <user identifier="{{ user.id }}" />
+                {% endif %}
+            {% endfor %}
+                </group>
+        {% endfor %}
+    </groups>
+    <users>
+{% for user in nifi_registry_users %}
+        <user identifier="{{ user.id }}" identity="{{ user.dn }}" />
+{% endfor %}
+    </users>
+</tenants>

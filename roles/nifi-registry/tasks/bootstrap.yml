@@ -2,34 +2,39 @@
   shell: docker rm -f nifi-registry-bootstrap
 
 - name: Bootstrap nifi registry
-  shell: "docker run -d --name nifi-registry-bootstrap {{ nifi_registry_image }} --entrypoint /bin/bash"
-  become: yes
-  become_user: "{{ nifi_registry_user }}"
+  shell: "docker run -d --name nifi-registry-bootstrap {{ nifi_registry_image }}"
 
-- name: Pause for 7 seconds
+- name: Pause for 15 seconds
   pause:
-    seconds: 7
+    seconds: 15
 
-- name: bootstrap conf out of container
-  shell: "docker cp nifi-registry-bootstrap:/opt/nifi-registry/nifi-registry-current/conf {{ nifi_registry_dir }}/data/conf"
-  become: yes
-  become_user: "{{ nifi_user }}"
-  # loop:
-  #   - content_repository
-  #   - database
-  #   - database_repository
-  #   - docs
-  #   - flowfile_repository
-  #   - logs
-  #   - provenance_repository
-  #   - state
+- name: Copy internals
+  shell: "docker cp nifi-registry-bootstrap:/opt/nifi-registry/nifi-registry-current/{{ item }} {{ nifi_registry_data_dir }}/"
+  loop:
+    - conf
+
+- name: Change permissions on /remote/file/path to ansible:user so we can write to it
+  file:
+    path: "{{ nifi_registry_data_dir }}/{{ item }}"
+    recurse: true
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
+  loop:
+    - conf
 
 - name: Cleanup bootstrap container
   shell: docker rm -f nifi-registry-bootstrap
 
+- name: Create nifi registry internals conf directory
+  file:
+    path: "{{ nifi_registry_data_dir }}/conf"
+    state: directory
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
+
 - name: Write bootstrap file
   file:
-    path: "{{ nifi_registry_dir }}/bootstrapped"
-    owner: "{{ nifi_user }}"
-    group: "{{ nifi_group }}"
+    path: "{{ nifi_registry_home_dir }}/bootstrapped"
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
     state: touch
