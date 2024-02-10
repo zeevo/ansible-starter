@@ -4,6 +4,7 @@ services:
     image: {{ nifi_registry_image }}
     networks:
       - registry_network
+    hostname: nifi-registry
     ports:
       - "18443:18443"
     volumes:

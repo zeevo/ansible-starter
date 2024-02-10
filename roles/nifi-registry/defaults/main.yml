@@ -1,6 +1,6 @@
 nifi_registry_truststore_password: truststorepass
 nifi_registry_keystore_password: keystorepass
-nifi_registry_name: registry
+nifi_registry_name: nifi-registry
 nifi_registry_user: nifi
 nifi_registry_group: nifi
 nifi_registry_home_dir: ~/nifi-registry

@@ -36,6 +36,7 @@ services:
     image: {{ nifi_image }}
     networks:
       - nifi_network
+    hostname: {{ nifi_name }}
     volumes:
       - {{ nifi_home_dir }}/nifi_certs:/opt/certs
       - {{ nifi_data_dir }}/conf:/opt/nifi/nifi-current/conf
