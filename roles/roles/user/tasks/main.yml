@@ -1,0 +1,10 @@
+- name: Ensure App Group Exists
+  group:
+    name: "{{ app_group }}"
+  become: yes
+
+- name: Ensure App User Exists
+  user:
+    name: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes

@@ -1,0 +1,57 @@
+- name: Create app directory
+  file:
+    path: "{{ work_dir }}/app"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
+
+- name: Clear app
+  file:
+    state: absent
+    path: "{{ work_dir }}/app/{{ app_name }}"
+
+- name: Clone app
+  become: yes
+  become_user: "{{ app_user }}"
+  git:
+    repo: "{{ app_git_repo }}"
+    dest: "{{ work_dir }}/app/{{ app_name }}"
+    version: "{{ app_branch }}"
+    accept_hostkey: yes
+    key_file: "{{ app_git_ssh_key_file }}"
+    force: yes
+
+- name: Create env file
+  template:
+    src: env.j2
+    dest: "{{ work_dir }}/app/{{ app_name }}/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Create Dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: "{{ work_dir }}/app/{{ app_name }}/Dockerfile"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Build app Docker image
+  docker_image:
+    source: build
+    build:
+      path: "{{ work_dir }}/app/{{ app_name }}"
+    name: "{{ app_name }}:latest"
+    state: present
+    force_source: true
+
+- name: Add app docker compose
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ work_dir }}/app/docker-compose.app.yml"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Start app
+  shell: "docker-compose -f {{ work_dir }}/app/docker-compose.app.yml up -d --force-recreate"
+  when: not app_dont_run

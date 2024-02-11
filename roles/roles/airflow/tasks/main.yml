@@ -1,0 +1,61 @@
+- name: Create directory for airflow
+  file:
+    path: "{{ work_dir }}/airflow"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Create logs directory for airflow
+  file:
+    path: "{{ work_dir }}/airflow/logs"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Create dags directory for airflow
+  file:
+    path: "{{ work_dir }}/airflow/dags"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Copy over extra dags directories
+  copy:
+    src: "{{ item }}"
+    dest: "{{ work_dir }}/airflow/dags"
+    remote_src: yes
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  with_items: "{{ airflow_extra_dags_dirs }}"
+  when: airflow_extra_dags_dirs is defined
+
+- name: Create plugins directory for airflow
+  file:
+    path: "{{ work_dir }}/airflow/plugins"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Add extra python requirements
+  template:
+    src: Dockerfile.j2
+    dest: "{{ work_dir }}/airflow/Dockerfile"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Add airflow Dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: "{{ work_dir }}/airflow/Dockerfile"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Add airflow docker compose
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ work_dir }}/airflow/docker-compose.airflow.yml"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+
+- name: Start airflow
+  shell: "UID=$UID GID=$GID docker-compose -f {{ work_dir }}/airflow/docker-compose.airflow.yml up -d --force-recreate"

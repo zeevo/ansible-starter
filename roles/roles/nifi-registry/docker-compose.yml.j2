@@ -10,9 +10,6 @@ services:
     volumes:
       - {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs
       - {{ nifi_registry_data_dir }}/conf:/opt/nifi-registry/nifi-registry-current/conf
-      - {{ nifi_registry_data_dir }}/database:/opt/nifi-registry/nifi-registry-current/database
-      - {{ nifi_registry_data_dir }}/flow_storage:/opt/nifi-registry/nifi-registry-current/flow_storage
-      - {{ nifi_registry_data_dir }}/logs:/opt/nifi-registry/nifi-registry-current/logs
     environment:
         AUTH: tls
         TRUSTSTORE_TYPE: JKS

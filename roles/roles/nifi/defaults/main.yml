@@ -1,0 +1,39 @@
+nifi_name: nifi-0
+nifi_user: nifi # This user MUST have UID 1000
+nifi_https_port: 8443
+nifi_image: apache/nifi:2.0.0-M1
+nifi_group: nifi
+nifi_home_dir: /home/nifi
+nifi_data_dir: "{{ nifi_home_dir }}/data"
+nifi_network: nifi
+
+# Base environment
+nifi_cluster_is_node: true
+nifi_web_https_port: 8443
+nifi_zk_connect_string: zookeeper:2181
+nifi_election_max_wait: 12 sec
+nifi_sensitive_props_key: my-random-string
+nifi_single_user_credentials_username: nifi
+nifi_single_user_credentials_password: nifinifinifinifi
+nifi_single_user_mode: false
+nifi_security_user_authorizer: single-user-authorizer
+nifi_security_user_login_identity_provider: single-user-provider
+nifi_additional_certs: []
+
+# Core
+nifi_archive_enabled: true
+
+# Provenance
+nifi_provenance_repository_max_storage_size: 10 GB
+
+nifi_groups: []
+nifi_users: []
+
+nifi_nodes:
+  - dn: CN=nifi-0, OU=NIFI
+
+nifi_keystore_password: keystorepass
+nifi_truststore_password: truststorepass
+generate_certs: true
+nifi_include_zookeeper: true
+nifi_include_registry: true

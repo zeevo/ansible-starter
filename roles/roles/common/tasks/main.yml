@@ -1,0 +1,8 @@
+- name: Create files
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+  loop: "{{ common_files }}"
+  become: true

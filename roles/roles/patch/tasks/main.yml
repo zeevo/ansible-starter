@@ -1,0 +1,4 @@
+- name: upgrade all packages
+  package:
+    name: "*"
+    state: latest

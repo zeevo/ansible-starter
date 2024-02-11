@@ -1,0 +1,7 @@
+- name: Create working directory
+  file:
+    path: "{{ work_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  become: yes
