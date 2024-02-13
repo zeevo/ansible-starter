@@ -1,3 +1,4 @@
+# Base
 nifi_name: nifi-0
 nifi_user: nifi # This user MUST have UID 1000
 nifi_https_port: 8443
@@ -8,32 +9,49 @@ nifi_data_dir: "{{ nifi_home_dir }}/data"
 nifi_network: nifi
 
 # Base environment
-nifi_cluster_is_node: true
+nifi_cluster_is_node: false
+nifi_cluster_node_protocol_port: 8082
+nifi_zookeeper_connect_string: zookeeper:2181
+
+# Cluster
+nifi_cluster_flow_election_wait_time: 12 sec
+
+# Web
 nifi_web_https_port: 8443
-nifi_zk_connect_string: zookeeper:2181
-nifi_election_max_wait: 12 sec
-nifi_sensitive_props_key: my-random-string
+
+# Single User Mode
+nifi_single_user_mode: false
 nifi_single_user_credentials_username: nifi
 nifi_single_user_credentials_password: nifinifinifinifi
-nifi_single_user_mode: false
 nifi_security_user_authorizer: single-user-authorizer
 nifi_security_user_login_identity_provider: single-user-provider
+
+# Other
 nifi_additional_certs: []
 
-# Core
-nifi_archive_enabled: true
+# Flow Configuration
+nifi_flow_configuration_archive_enabled: true
 
 # Provenance
 nifi_provenance_repository_max_storage_size: 10 GB
 
+# Users and Groups
 nifi_groups: []
 nifi_users: []
 
+# Nodes
 nifi_nodes:
-  - dn: CN=nifi-0, OU=NIFI
+  - dn: "CN={{ nifi_name }}, OU=NIFI"
 
-nifi_keystore_password: keystorepass
-nifi_truststore_password: truststorepass
-generate_certs: true
+# Security
+nifi_security_keystore_password: keystorepass
+nifi_security_keystore: "/opt/certs/{{ nifi_name }}/keystore.jks"
+nifi_security_keystore_type: PKCS12
+nifi_security_truststore_password: truststorepass
+nifi_security_truststore: "/opt/certs/{{ nifi_name }}/truststore.jks"
+nifi_security_truststore_type: PKCS12
+nifi_sensitive_props_key: my-random-string
+
+# Other
 nifi_include_zookeeper: true
 nifi_include_registry: true

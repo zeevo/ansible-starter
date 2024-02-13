@@ -1,6 +1,6 @@
 # Core Properties #
 nifi.flow.configuration.file=./conf/flow.json.gz
-nifi.flow.configuration.archive.enabled={{ nifi_archive_enabled }}
+nifi.flow.configuration.archive.enabled={{ nifi_flow_configuration_archive_enabled }}
 nifi.flow.configuration.archive.dir=./conf/archive/
 nifi.flow.configuration.archive.max.time=30 days
 nifi.flow.configuration.archive.max.storage=500 MB
@@ -146,7 +146,7 @@ nifi.web.http.network.interface.default=
 #############################################
 
 nifi.web.https.host=96fd56b4e867
-nifi.web.https.port=8443
+nifi.web.https.port={{ nifi_web_https_port }}
 nifi.web.https.network.interface.default=
 nifi.web.https.application.protocols=h2 http/1.1
 nifi.web.jetty.working.directory=./work/jetty
@@ -170,20 +170,20 @@ nifi.web.https.ciphersuites.include=
 nifi.web.https.ciphersuites.exclude=
 
 # security properties #
-nifi.sensitive.props.key=7q549lMKdTP+FN2l0sdVAxW4NuDjakP9
+nifi.sensitive.props.key={{ nifi_sensitive_props_key }}
 nifi.sensitive.props.key.protected=
 nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
 nifi.sensitive.props.additional.keys=
 
 nifi.security.autoreload.enabled=false
 nifi.security.autoreload.interval=10 secs
-nifi.security.keystore=./conf/keystore.p12
-nifi.security.keystoreType=PKCS12
-nifi.security.keystorePasswd=066c806d8652c312beaf3cea8fef358f
-nifi.security.keyPasswd=066c806d8652c312beaf3cea8fef358f
-nifi.security.truststore=./conf/truststore.p12
-nifi.security.truststoreType=PKCS12
-nifi.security.truststorePasswd=8176537a0920cd3bc8ebf417da26e9db
+nifi.security.keystore={{ nifi_security_keystore }}
+nifi.security.keystoreType={{ nifi_security_keystore_type }}
+nifi.security.keystorePasswd={{ nifi_security_keystore_password }}
+nifi.security.keyPasswd={{ nifi_security_keystore_password }}
+nifi.security.truststore={{ nifi_security_truststore }}
+nifi.security.truststoreType={{ nifi_security_truststore_type }}
+nifi.security.truststorePasswd={{ nifi_security_truststore_password }}
 nifi.security.user.authorizer=single-user-authorizer
 nifi.security.allow.anonymous.authentication=false
 nifi.security.user.login.identity.provider=single-user-provider
@@ -256,17 +256,17 @@ nifi.cluster.protocol.heartbeat.missable.max=8
 nifi.cluster.protocol.is.secure=true
 
 # cluster node properties (only configure for cluster nodes) #
-nifi.cluster.is.node=false
+nifi.cluster.is.node={{ nifi_cluster_is_node }}
 nifi.cluster.leader.election.implementation=CuratorLeaderElectionManager
 nifi.cluster.node.address=96fd56b4e867
-nifi.cluster.node.protocol.port=
+nifi.cluster.node.protocol.port={{ nifi_cluster_node_protocol_port }}
 nifi.cluster.node.protocol.max.threads=50
 nifi.cluster.node.event.history.size=25
 nifi.cluster.node.connection.timeout=5 sec
 nifi.cluster.node.read.timeout=5 sec
 nifi.cluster.node.max.concurrent.requests=100
 nifi.cluster.firewall.file=
-nifi.cluster.flow.election.max.wait.time=5 mins
+nifi.cluster.flow.election.max.wait.time={{ nifi_cluster_flow_election_wait_time }}
 nifi.cluster.flow.election.max.candidates=
 
 # cluster load balancing properties #
@@ -277,7 +277,7 @@ nifi.cluster.load.balance.max.thread.count=8
 nifi.cluster.load.balance.comms.timeout=30 sec
 
 # zookeeper properties, used for cluster management #
-nifi.zookeeper.connect.string=
+nifi.zookeeper.connect.string={{ nifi_zookeeper_connect_string }}
 nifi.zookeeper.connect.timeout=10 secs
 nifi.zookeeper.session.timeout=10 secs
 nifi.zookeeper.root.node=/nifi

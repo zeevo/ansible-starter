@@ -10,7 +10,7 @@
 
 - name: Add zookeeper user to docker group
   shell: usermod -aG docker {{ zookeeper_user }}
-  become: yes
+  become: true
 
 - name: Create directory for zookeeper
   file:
