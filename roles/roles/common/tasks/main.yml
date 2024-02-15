@@ -6,3 +6,13 @@
     group: "{{ item.group }}"
   loop: "{{ common_files }}"
   become: true
+
+- name: Copy files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.user }}"
+    group: "{{ item.group | default(None) }}"
+    mode: "{{ item.mode | default(None) }}"
+  loop: "{{ common_copy }}"
+  become: true

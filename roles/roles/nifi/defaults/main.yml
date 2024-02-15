@@ -31,6 +31,7 @@ nifi_additional_certs: []
 
 # Flow Configuration
 nifi_flow_configuration_archive_enabled: true
+nifi_content_repository_archive_enabled: true
 
 # Provenance
 nifi_provenance_repository_max_storage_size: 10 GB

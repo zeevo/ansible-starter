@@ -1,6 +1,6 @@
 # Core Properties #
 nifi.flow.configuration.file=./conf/flow.json.gz
-nifi.flow.configuration.archive.enabled={{ nifi_flow_configuration_archive_enabled }}
+nifi.flow.configuration.archive.enabled={{ nifi_flow_configuration_archive_enabled | string | lower }}
 nifi.flow.configuration.archive.dir=./conf/archive/
 nifi.flow.configuration.archive.max.time=30 days
 nifi.flow.configuration.archive.max.storage=500 MB
@@ -78,7 +78,7 @@ nifi.content.claim.max.appendable.size=50 KB
 nifi.content.repository.directory.default=./content_repository
 nifi.content.repository.archive.max.retention.period=3 hours
 nifi.content.repository.archive.max.usage.percentage=90%
-nifi.content.repository.archive.enabled=true
+nifi.content.repository.archive.enabled={{ nifi_content_repository_archive_enabled | string | lower }}
 nifi.content.repository.always.sync=false
 nifi.content.viewer.url=../nifi-content-viewer/
 
