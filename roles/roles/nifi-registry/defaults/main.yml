@@ -8,3 +8,4 @@ nifi_registry_data_dir: "{{ nifi_registry_home_dir }}/data"
 nifi_registry_network: nifi-registry
 nifi_registry_image: apache/nifi-registry:2.0.0-M1
 nifi_registry_additional_certs: []
+nifi_registry_subject_alternative_names: ["localhost"]

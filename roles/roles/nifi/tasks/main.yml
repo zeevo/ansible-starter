@@ -105,7 +105,7 @@
     dest: "{{ nifi_home_dir }}/scripts/make_cert.sh"
 
 - name: Create truststore and keystore
-  shell: "docker run --user root -v {{ nifi_home_dir }}/nifi_certs:/opt/certs apache/nifi-toolkit:latest tls-toolkit standalone -O --subjectAlternativeNames {{ nifi_name }},localhost -o /opt/certs -n {{ nifi_name }} -P {{ nifi_security_truststore_password }} -K {{ nifi_security_keystore_password }} -S {{ nifi_security_keystore_password }}"
+  shell: "docker run --user root -v {{ nifi_home_dir }}/nifi_certs:/opt/certs apache/nifi-toolkit:latest tls-toolkit standalone -O --subjectAlternativeNames {{ nifi_name }},{{ nifi_subject_alternative_names | join(',') }} -o /opt/certs -n {{ nifi_name }} -P {{ nifi_security_truststore_password }} -K {{ nifi_security_keystore_password }} -S {{ nifi_security_keystore_password }}"
 
 - name: Cat NiFi Cert
   shell: "cat {{ nifi_home_dir }}/nifi_certs/nifi-cert.pem"

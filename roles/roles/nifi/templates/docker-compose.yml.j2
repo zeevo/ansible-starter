@@ -33,8 +33,8 @@ services:
     ports:
       - {{ nifi_https_port }}:{{ nifi_https_port }}
     environment:
-      NIFI_CLUSTER_ADDRESS: {{ nifi_name }}
-      NIFI_WEB_HTTPS_HOST: {{ nifi_name }}
+      __hold: hold
+      # NIFI_CLUSTER_ADDRESS: {{ nifi_name }}
       {% if nifi_single_user_mode  %}
         SINGLE_USER_CREDENTIALS_USERNAME: {{ nifi_single_user_credentials_username }}
         SINGLE_USER_CREDENTIALS_PASSWORD: {{ nifi_single_user_credentials_password }}

@@ -1,5 +1,5 @@
 # Base
-nifi_name: nifi-0
+nifi_name: nifi
 nifi_user: nifi # This user MUST have UID 1000
 nifi_https_port: 8443
 nifi_image: apache/nifi:2.0.0-M1
@@ -18,6 +18,7 @@ nifi_cluster_flow_election_wait_time: 12 sec
 
 # Web
 nifi_web_https_port: 8443
+nifi_web_https_host: nifi
 
 # Single User Mode
 nifi_single_user_mode: false
@@ -28,6 +29,7 @@ nifi_security_user_login_identity_provider: single-user-provider
 
 # Other
 nifi_additional_certs: []
+nifi_subject_alternative_names: ["localhost"]
 
 # Flow Configuration
 nifi_flow_configuration_archive_enabled: true

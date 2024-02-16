@@ -73,7 +73,7 @@
     group: "{{ nifi_registry_group }}"
 
 - name: Create truststore and keystore
-  shell: "docker run --user root -v {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs apache/nifi-toolkit:latest tls-toolkit standalone -O --subjectAlternativeNames {{ nifi_registry_name }},localhost -o /opt/certs -n {{ nifi_registry_name }} -P {{ nifi_registry_truststore_password }} -K {{ nifi_registry_keystore_password }} -S {{ nifi_registry_keystore_password }}"
+  shell: "docker run --user root -v {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs apache/nifi-toolkit:latest tls-toolkit standalone -O --subjectAlternativeNames {{ nifi_registry_name }},{{ nifi_registry_subject_alternative_names | join(',') }} -o /opt/certs -n {{ nifi_registry_name }} -P {{ nifi_registry_truststore_password }} -K {{ nifi_registry_keystore_password }} -S {{ nifi_registry_keystore_password }}"
 
 - name: Cat NiFi Registry Cert
   shell: "cat {{ nifi_registry_home_dir }}/nifi_certs/nifi-cert.pem"
