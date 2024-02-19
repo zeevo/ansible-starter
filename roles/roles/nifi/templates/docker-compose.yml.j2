@@ -33,7 +33,17 @@ services:
     ports:
       - {{ nifi_https_port }}:{{ nifi_https_port }}
     environment:
-      __hold: hold
+      AUTH: tls
+      KEYSTORE_PATH: {{ nifi_security_keystore }}
+      KEYSTORE_TYPE: {{ nifi_security_keystore_type }}
+      KEYSTORE_PASSWORD: {{ nifi_security_keystore_password }}
+      TRUSTSTORE_PATH: {{ nifi_security_truststore }}
+      TRUSTSTORE_TYPE: {{ nifi_security_truststore_type }}
+      TRUSTSTORE_PASSWORD: {{ nifi_security_truststore_password }}
+      NIFI_CLUSTER_IS_NODE: {{ nifi_cluster_is_node | string | lower}}
+      NIFI_CLUSTER_ADDRESS: {{ nifi_name }}
+      NIFI_CLUSTER_NODE_PROTOCOL_PORT: {{ nifi_cluster_node_protocol_port }}
+      NIFI_ZK_CONNECT_STRING: {{ nifi_zookeeper_connect_string }}
       # NIFI_CLUSTER_ADDRESS: {{ nifi_name }}
       {% if nifi_single_user_mode  %}
         SINGLE_USER_CREDENTIALS_USERNAME: {{ nifi_single_user_credentials_username }}

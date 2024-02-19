@@ -256,7 +256,7 @@ nifi.cluster.protocol.heartbeat.missable.max=8
 nifi.cluster.protocol.is.secure=true
 
 # cluster node properties (only configure for cluster nodes) #
-nifi.cluster.is.node={{ nifi_cluster_is_node }}
+nifi.cluster.is.node={{ nifi_cluster_is_node | string | lower }}
 nifi.cluster.leader.election.implementation=CuratorLeaderElectionManager
 nifi.cluster.node.address=96fd56b4e867
 nifi.cluster.node.protocol.port={{ nifi_cluster_node_protocol_port }}

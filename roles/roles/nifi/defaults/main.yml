@@ -9,12 +9,12 @@ nifi_data_dir: "{{ nifi_home_dir }}/data"
 nifi_network: nifi
 
 # Base environment
-nifi_cluster_is_node: false
-nifi_cluster_node_protocol_port: 8082
-nifi_zookeeper_connect_string: zookeeper:2181
 
 # Cluster
+nifi_cluster_is_node: false
 nifi_cluster_flow_election_wait_time: 12 sec
+nifi_cluster_node_protocol_port: 8082
+nifi_zookeeper_connect_string: zookeeper:2181
 
 # Web
 nifi_web_https_port: 8443
