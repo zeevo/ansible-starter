@@ -1,22 +1,12 @@
 services:
 
-{% if nifi_include_zookeeper %}
-  zookeeper:
-    container_name: zookeeper
-    image: bitnami/zookeeper:latest
-    networks:
-      - nifi_network
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-{% endif %}
-
   {{ nifi_name }}:
     image: {{ nifi_image }}
     hostname: {{ nifi_name }}
     networks:
       - nifi_network
     volumes:
-      - {{ nifi_home_dir }}/nifi_certs:/opt/certs
+      - {{ nifi_home_dir }}/nifi_certs/{{ nifi_name }}:/opt/certs
       - {{ nifi_data_dir }}/conf:/opt/nifi/nifi-current/conf
       - {{ nifi_data_dir }}/extensions:/opt/nifi/nifi-current/extensions
       - {{ nifi_data_dir }}/database_repository:/opt/nifi/nifi-current/database_repository
@@ -25,6 +15,7 @@ services:
       - {{ nifi_data_dir }}/provenance_repository:/opt/nifi/nifi-current/provenance_repository
       - {{ nifi_data_dir }}/state:/opt/nifi/nifi-current/state
       - {{ nifi_data_dir }}/logs:/opt/nifi/nifi-current/logs
+      - {{ nifi_nar_extensions_dir }}:/opt/nifi/nifi-current/nar_extensions
 {% for item in nifi_extra_docker_volumes %}
       - {{ item }}
 {% endfor %}
@@ -41,25 +32,18 @@ services:
       TRUSTSTORE_TYPE: {{ nifi_security_truststore_type }}
       TRUSTSTORE_PASSWORD: {{ nifi_security_truststore_password }}
       NIFI_CLUSTER_IS_NODE: {{ nifi_cluster_is_node | string | lower}}
-      NIFI_CLUSTER_ADDRESS: {{ nifi_name }}
+      NIFI_CLUSTER_ADDRESS: {{ nifi_cluster_address }}
       NIFI_CLUSTER_NODE_PROTOCOL_PORT: {{ nifi_cluster_node_protocol_port }}
       NIFI_ZK_CONNECT_STRING: {{ nifi_zookeeper_connect_string }}
-      # NIFI_CLUSTER_ADDRESS: {{ nifi_name }}
-      {% if nifi_single_user_mode  %}
-        SINGLE_USER_CREDENTIALS_USERNAME: {{ nifi_single_user_credentials_username }}
-        SINGLE_USER_CREDENTIALS_PASSWORD: {{ nifi_single_user_credentials_password }}
-        NIFI_SECURITY_USER_AUTHORIZER: single-user-authorizer
-        NIFI_SECURITY_USER_LOGIN_IDENTITY_PROVIDER: single-user-provider
-      {% endif %}
-      {% if nifi_initial_admin_identity is defined %}
+      NIFI_ELECTION_MAX_WAIT: {{ nifi_cluster_flow_election_wait_time }}
+{% if nifi_single_user_mode  %}
+      SINGLE_USER_CREDENTIALS_USERNAME: {{ nifi_single_user_credentials_username }}
+      SINGLE_USER_CREDENTIALS_PASSWORD: {{ nifi_single_user_credentials_password }}
+      NIFI_SECURITY_USER_AUTHORIZER: single-user-authorizer
+      NIFI_SECURITY_USER_LOGIN_IDENTITY_PROVIDER: single-user-provider
+{% endif %}
+{% if nifi_initial_admin_identity is defined %}
       INITIAL_ADMIN_IDENTITY: {{ nifi_initial_admin_identity }}
-      {% endif %}
-
-{% if nifi_include_registry %}
-  registry:
-    image: apache/nifi-registry:latest
-    ports:
-      - 18080:18080
 {% endif %}
 
 networks:

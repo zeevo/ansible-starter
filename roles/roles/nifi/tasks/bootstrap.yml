@@ -20,6 +20,7 @@
     - flowfile_repository
     - state
     - logs
+    - nar_extensions
 
 - name: Change permissions on /remote/file/path to ansible:user so we can write to it 
   file:
@@ -35,6 +36,7 @@
     - flowfile_repository
     - state
     - logs
+    - nar_extensions
 
 - name: Cleanup bootstrap container
   shell: docker rm -f nifi-bootstrap

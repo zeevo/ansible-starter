@@ -39,6 +39,7 @@
     - logs
     - provenance_repository
     - state
+    - nar_extensions
 
 - name: Add nifi docker compose
   template:
@@ -152,6 +153,20 @@
   template:
     src: get_shell.sh.j2
     dest: "{{ nifi_home_dir }}/get_shell.sh"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+
+- name: Add view_keystore
+  template:
+    src: view_keystore.sh.j2
+    dest: "{{ nifi_home_dir }}/view_keystore.sh"
+    owner: "{{ nifi_user }}"
+    group: "{{ nifi_group }}"
+
+- name: Add view_truststore
+  template:
+    src: view_truststore.sh.j2
+    dest: "{{ nifi_home_dir }}/view_truststore.sh"
     owner: "{{ nifi_user }}"
     group: "{{ nifi_group }}"
 
