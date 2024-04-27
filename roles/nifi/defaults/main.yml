@@ -1,4 +1,5 @@
-nifi_name: nifi-0
+# Base
+nifi_name: nifi
 nifi_user: nifi # This user MUST have UID 1000
 nifi_https_port: 8443
 nifi_image: apache/nifi:2.0.0-M1
@@ -6,33 +7,52 @@ nifi_group: nifi
 nifi_home_dir: /home/nifi
 nifi_data_dir: "{{ nifi_home_dir }}/data"
 nifi_network: nifi
+nifi_nar_extensions_dir: "{{ nifi_data_dir }}/nar_extensions"
 
 # Base environment
-nifi_cluster_is_node: true
+
+# Cluster
+nifi_cluster_address: "{{ nifi_name }}"
+nifi_cluster_is_node: false
+nifi_cluster_node_protocol_port: 8082
+nifi_zookeeper_connect_string: zookeeper:2181
+nifi_cluster_flow_election_wait_time: 1 min
+
+# Web
 nifi_web_https_port: 8443
-nifi_zk_connect_string: zookeeper:2181
-nifi_election_max_wait: 12 sec
-nifi_sensitive_props_key: my-random-string
+nifi_web_https_host: nifi
+
+# Single User Mode
+nifi_single_user_mode: false
 nifi_single_user_credentials_username: nifi
 nifi_single_user_credentials_password: nifinifinifinifi
-nifi_single_user_mode: false
 nifi_security_user_authorizer: single-user-authorizer
 nifi_security_user_login_identity_provider: single-user-provider
 
-# Core
-nifi_archive_enabled: true
+# Flow Configuration
+nifi_flow_configuration_archive_enabled: true
+nifi_content_repository_archive_enabled: true
 
 # Provenance
 nifi_provenance_repository_max_storage_size: 10 GB
 
+# Users and Groups
 nifi_groups: []
 nifi_users: []
 
+# Nodes
 nifi_nodes:
-  - dn: CN=nifi-0, OU=NIFI
+  - dn: "CN={{ nifi_name }}, OU=NIFI"
 
-nifi_keystore_password: keystorepass
-nifi_truststore_password: truststorepass
-generate_certs: true
-nifi_include_zookeeper: true
-nifi_include_registry: true
+# Security
+nifi_security_keystore_password: keystorepass
+nifi_security_keystore: "/opt/certs/keystore.jks"
+nifi_security_keystore_type: PKCS12
+nifi_security_truststore_password: truststorepass
+nifi_security_truststore: "/opt/certs/truststore.jks"
+nifi_security_truststore_type: PKCS12
+nifi_sensitive_props_key: my-random-string
+
+# Other
+nifi_additional_certs: []
+nifi_subject_alternative_names: ["localhost"]

@@ -1,0 +1,14 @@
+# Base
+postgres_name: postgres
+postgres_user: postgres
+postgres_image: postgres:latest
+postgres_group: postgres
+postgres_home_dir: /home/postgres
+postgres_data_dir: "{{ postgres_home_dir }}/data"
+postgres_network: postgres
+postgres_service_name: postgres
+
+# Database
+postgres_db_user: postgres
+postgres_db: postgres
+postgres_password: postgres

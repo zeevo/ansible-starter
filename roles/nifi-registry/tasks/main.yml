@@ -73,7 +73,15 @@
     group: "{{ nifi_registry_group }}"
 
 - name: Create truststore and keystore
-  shell: "docker run --user root -v {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs apache/nifi-toolkit:latest tls-toolkit standalone -O --subjectAlternativeNames {{ nifi_registry_name }},localhost -o /opt/certs -n {{ nifi_registry_name }} -P {{ nifi_registry_truststore_password }} -K {{ nifi_registry_keystore_password }} -S {{ nifi_registry_keystore_password }}"
+  shell: "docker run --user root -v {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs apache/nifi-toolkit:latest tls-toolkit standalone -O --subjectAlternativeNames {{ nifi_registry_name }},{{ nifi_registry_subject_alternative_names | join(',') }} -o /opt/certs -n {{ nifi_registry_name }} -P {{ nifi_registry_security_truststore_password }} -K {{ nifi_registry_security_keystore_password }} -S {{ nifi_registry_security_keystore_password }}"
+
+- name: Cat NiFi Registry Cert
+  shell: "cat {{ nifi_registry_home_dir }}/nifi_certs/nifi-cert.pem"
+  register: _nifi_cert_output
+
+- name: Print NiFi Cert
+  debug:
+    msg: "{{ _nifi_cert_output.stdout_lines }}"
 
 - name: Change permissions on /remote/file/path to ansible:user so we can write to it
   file:
@@ -82,14 +90,38 @@
     owner: "{{ nifi_registry_user }}"
     group: "{{ nifi_registry_group }}"
 
+- name: Make tmp cert dir
+  file:
+    path: /tmp/ansible-nifi-registry-certs
+    state: directory
+
+- name: Copy tmp certs
+  loop: "{{ nifi_registry_users + nifi_registry_additional_certs }}"
+  copy:
+    src: "{{ item.cert }}"
+    dest: "/tmp/ansible-nifi-registry-certs/{{ item.cert }}"
+
 - name: Add users to truststore
-  loop: "{{ nifi_registry_users }}"
-  shell: "docker run -v /tmp/ansible-nifi-certs:/tmp/ansible-nifi-certs -v {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs openjdk keytool -noprompt -import -file /tmp/ansible-nifi-certs/{{ item.cert }} -alias {{ item.alias }} -keystore /opt/certs/{{ nifi_registry_name }}/truststore.jks -storepass {{ nifi_registry_truststore_password }}"
-  ignore_errors: true
+  loop: "{{ nifi_registry_users + nifi_registry_additional_certs }}"
+  shell: "docker run -v /tmp/ansible-nifi-registry-certs:/tmp/ansible-nifi-registry-certs -v {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs openjdk keytool -noprompt -import -file /tmp/ansible-nifi-registry-certs/{{ item.cert }} -alias {{ item.alias }} -keystore /opt/certs/{{ nifi_registry_name }}/truststore.jks -storepass {{ nifi_registry_security_truststore_password }}"
 
 - name: Create registry network
   shell: "docker network create {{ nifi_registry_network }} || true"
   ignore_errors: true
+
+- name: Add view_keystore
+  template:
+    src: view_keystore.sh.j2
+    dest: "{{ nifi_registry_home_dir }}/view_keystore.sh"
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
+
+- name: Add view_truststore
+  template:
+    src: view_truststore.sh.j2
+    dest: "{{ nifi_registry_home_dir }}/view_truststore.sh"
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
 
 - name: Start registry
   shell: "docker compose -f {{ nifi_registry_home_dir }}/docker-compose.yml up -d --force-recreate --remove-orphans"

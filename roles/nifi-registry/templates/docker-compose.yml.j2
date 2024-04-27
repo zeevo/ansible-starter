@@ -4,11 +4,11 @@ services:
     image: {{ nifi_registry_image }}
     networks:
       - registry_network
-    hostname: nifi-registry
+    hostname: {{ nifi_registry_name }}
     ports:
       - "18443:18443"
     volumes:
-      - {{ nifi_registry_home_dir }}/nifi_certs:/opt/certs
+      - {{ nifi_registry_home_dir }}/nifi_certs/{{ nifi_registry_name }}:/opt/certs
       - {{ nifi_registry_data_dir }}/conf:/opt/nifi-registry/nifi-registry-current/conf
       - {{ nifi_registry_data_dir }}/database:/opt/nifi-registry/nifi-registry-current/database
       - {{ nifi_registry_data_dir }}/flow_storage:/opt/nifi-registry/nifi-registry-current/flow_storage
@@ -17,10 +17,10 @@ services:
         AUTH: tls
         TRUSTSTORE_TYPE: JKS
         KEYSTORE_TYPE: JKS
-        KEYSTORE_PATH: /opt/certs/{{ nifi_registry_name }}/keystore.jks
-        TRUSTSTORE_PATH: /opt/certs/{{ nifi_registry_name }}/truststore.jks
-        KEYSTORE_PASSWORD: {{ nifi_registry_keystore_password }}
-        TRUSTSTORE_PASSWORD: {{ nifi_registry_truststore_password }}
+        KEYSTORE_PATH: /opt/certs/keystore.jks
+        TRUSTSTORE_PATH: /opt/certs/truststore.jks
+        KEYSTORE_PASSWORD: {{ nifi_registry_security_keystore_password }}
+        TRUSTSTORE_PASSWORD: {{ nifi_registry_security_truststore_password }}
 
 networks:
   registry_network:

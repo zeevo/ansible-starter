@@ -10,7 +10,7 @@
 {% endfor %}
         </policy>
 
-        <policy identifier="1CE953DF-5FCB-4DC3-A964-E4E25E202CD9" resource="/proxy" action="R">
+        <policy identifier="16E19609-3417-4088-93F7-C8EAE547DA38" resource="/proxy" action="R">
 {% for group in nifi_registry_groups %}
     {% if 'proxy' in group.permissions %}
             <group identifier="{{ group.id }}"/>

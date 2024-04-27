@@ -7,12 +7,18 @@
             <group identifier="{{ group.id }}"/>
     {% endif %}
 {% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
         </policy>
         <policy identifier="b8775bd4-704a-34c6-987b-84f2daf7a515" resource="/restricted-components" action="W">
 {% for group in nifi_groups %}
     {% if 'restricted-components' in group.permissions %}
             <group identifier="{{ group.id }}"/>
     {% endif %}
+{% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
 {% endfor %}
         </policy>
         <policy identifier="627410be-1717-35b4-a06f-e9362b89e0b7" resource="/tenants" action="R">
@@ -21,12 +27,18 @@
             <group identifier="{{ group.id }}"/>
     {% endif %}
 {% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
         </policy>
         <policy identifier="15e4e0bd-cb28-34fd-8587-f8d15162cba5" resource="/tenants" action="W">
 {% for group in nifi_groups %}
     {% if 'tenants' in group.permissions %}
             <group identifier="{{ group.id }}"/>
     {% endif %}
+{% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
 {% endfor %}
         </policy>
         <policy identifier="ff96062a-fa99-36dc-9942-0f6442ae7212" resource="/policies" action="R">
@@ -35,12 +47,18 @@
             <group identifier="{{ group.id }}"/>
     {% endif %}
 {% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
         </policy>
         <policy identifier="ad99ea98-3af6-3561-ae27-5bf09e1d969d" resource="/policies" action="W">
 {% for group in nifi_groups %}
     {% if 'policies' in group.permissions %}
             <group identifier="{{ group.id }}"/>
     {% endif %}
+{% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
 {% endfor %}
         </policy>
         <policy identifier="2e1015cb-0fed-3005-8e0d-722311f21a03" resource="/controller" action="R">
@@ -49,12 +67,18 @@
             <group identifier="{{ group.id }}"/>
     {% endif %}
 {% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
         </policy>
         <policy identifier="c6322e6c-4cc1-3bcc-91b3-2ed2111674cf" resource="/controller" action="W">
 {% for group in nifi_groups %}
     {% if 'controller' in group.permissions %}
             <group identifier="{{ group.id }}"/>
     {% endif %}
+{% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
 {% endfor %}
         </policy>
         <policy identifier="8b2d1251-018d-1000-ffff-ffffff78ddc0" resource="/system" action="R">
@@ -63,12 +87,18 @@
             <group identifier="{{ group.id }}"/>
     {% endif %}
 {% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
         </policy>
          <policy identifier="101CC2D2-F781-499E-9418-9A25203B8153" resource="/site-to-site" action="R">
 {% for group in nifi_groups %}
     {% if 'site-to-site' in group.permissions %}
             <group identifier="{{ group.id }}"/>
     {% endif %}
+{% endfor %}
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
 {% endfor %}
         </policy>
         <policy identifier="0c1817ad-f37b-4897-a884-f8f8f8c53eb7" resource="/proxy" action="W">
@@ -95,31 +125,49 @@
 {% endfor %}
         </policy>
         <policy identifier="8b3d25ee-018d-1000-0000-000039da2124" resource="/process-groups/{{ nifi_root_pg_id }}" action="R">
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
 {% for user in nifi_users %}
             <user identifier="{{ user.id}}" />
 {% endfor %}
         </policy>
         <policy identifier="8b3d5841-018d-1000-0000-00001b914141" resource="/process-groups/{{ nifi_root_pg_id }}" action="W">
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
 {% for user in nifi_users %}
             <user identifier="{{ user.id}}" />
 {% endfor %}
         </policy>
         <policy identifier="8b3ebe4e-018d-1000-ffff-ffffa5f4715a" resource="/operation/process-groups/{{ nifi_root_pg_id }}" action="W">
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
 {% for user in nifi_users %}
             <user identifier="{{ user.id}}" />
 {% endfor %}
         </policy>
         <policy identifier="8b3edee3-018d-1000-0000-00004118eeae" resource="/provenance-data/process-groups/{{ nifi_root_pg_id }}" action="R">
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
 {% for user in nifi_users %}
             <user identifier="{{ user.id}}" />
 {% endfor %}
         </policy>
         <policy identifier="8b3f1dfb-018d-1000-0000-00003d8789f9" resource="/policies/process-groups/{{ nifi_root_pg_id }}" action="R">
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
 {% for user in nifi_users %}
             <user identifier="{{ user.id}}" />
 {% endfor %}
         </policy>
         <policy identifier="8b3f3a17-018d-1000-ffff-ffff8bfc5cb5" resource="/policies/process-groups/{{ nifi_root_pg_id }}" action="W">
+{% for node in nifi_nodes %}
+            <user identifier="{{ node.dn }}" />
+{% endfor %}
 {% for user in nifi_users %}
             <user identifier="{{ user.id}}" />
 {% endfor %}

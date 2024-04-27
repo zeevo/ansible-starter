@@ -1,5 +1,7 @@
-nifi_registry_truststore_password: truststorepass
-nifi_registry_keystore_password: keystorepass
+nifi_registry_security_truststore_password: truststorepass
+nifi_registry_security_keystore_password: keystorepass
+nifi_registry_security_keystore: /opt/certs/keystore.jks
+nifi_registry_security_truststore: /opt/certs/truststore.jks
 nifi_registry_name: nifi-registry
 nifi_registry_user: nifi
 nifi_registry_group: nifi
@@ -7,5 +9,5 @@ nifi_registry_home_dir: ~/nifi-registry
 nifi_registry_data_dir: "{{ nifi_registry_home_dir }}/data"
 nifi_registry_network: nifi-registry
 nifi_registry_image: apache/nifi-registry:2.0.0-M1
-nifi_registry_users: []
-nifi_registry_groups: []
+nifi_registry_additional_certs: []
+nifi_registry_subject_alternative_names: ["localhost"]

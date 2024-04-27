@@ -1,23 +1,33 @@
+- name: Create postgres group
+  group:
+    name: "{{ postgres_group }}"
+    state: present
+
+- name: Create postgres user
+  user:
+    name: "{{ postgres_user }}"
+    group: "{{ postgres_group }}"
+
 - name: create directory for postgres
   file:
-    path: "{{ work_dir }}/postgres"
+    path: "{{ postgres_home_dir }}/postgres"
     state: directory
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
+    owner: "{{ postgres_user }}"
+    group: "{{ postgres_group }}"
 
 - name: create data directory for postgres
   file:
-    path: "{{ work_dir }}/postgres/data"
+    path: "{{ postgres_data_dir }}"
     state: directory
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
+    owner: "{{ postgres_user }}"
+    group: "{{ postgres_group }}"
 
 - name: add postgres docker compose
   template:
     src: docker-compose.yml.j2
-    dest: "{{ work_dir }}/postgres/docker-compose.postgres.yml"
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
+    dest: "{{ postgres_home_dir }}/docker-compose.yml"
+    owner: "{{ postgres_user }}"
+    group: "{{ postgres_group }}"
 
 - name: Start postgres
-  shell: "docker-compose -f {{ work_dir }}/postgres/docker-compose.postgres.yml up -d --force-recreate"
+  shell: "docker compose -f {{ postgres_home_dir }}/docker-compose.yml up -d --force-recreate"
