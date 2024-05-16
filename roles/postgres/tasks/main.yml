@@ -10,7 +10,7 @@
 
 - name: create directory for postgres
   file:
-    path: "{{ postgres_home_dir }}/postgres"
+    path: "{{ postgres_home_dir }}"
     state: directory
     owner: "{{ postgres_user }}"
     group: "{{ postgres_group }}"
